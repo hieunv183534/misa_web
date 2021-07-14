@@ -59,14 +59,14 @@
     background-color: #bbbbbb;
 }
 
-.content .content-body .grid table.tb-body tr th {
+.content .content-body .grid table.tb-body tr td {
     padding: 5px 10px;
-    width: 10%;
+    width: 5%;
     text-align:left;
 }
 
 .content .content-body .grid table.tb-head tr th {
     padding: 5px 10px;
-    width: 10%;
+    width: 5%;
     text-align: left;
 }

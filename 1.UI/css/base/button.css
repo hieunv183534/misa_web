@@ -33,6 +33,13 @@ button {
     }*/
 
     .button.button-icon {
+        padding-left: 16px;
+        padding-right: 16px;
+        min-width:50px;
+    }
+
+    .button.button-icon i {
+        margin-right: 8px;
     }
 
     .button.button-refresh {
