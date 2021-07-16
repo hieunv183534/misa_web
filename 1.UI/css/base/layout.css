@@ -189,8 +189,12 @@
                 display:flex;
             }
 
-                .content .content-body .content-toolbar .toolbar-left .combobox{
+                /*.content .content-body .content-toolbar .toolbar-left .combobox{
                     margin-left:16px;
+                }*/
+
+                .content .content-body .content-toolbar .toolbar-left .dropdown {
+                    margin-left: 16px;
                 }
 
                 .content .content-body .content-toolbar .toolbar-right {
