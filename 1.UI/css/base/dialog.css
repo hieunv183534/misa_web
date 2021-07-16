@@ -153,7 +153,11 @@
                     width: 290px;
                 }
 
-                    .employee-profile-dialog .dialog-content .dialog-content-right .small-info input.calender {
+                .employee-profile-dialog .dialog-content .dialog-content-right .small-info select {
+                    width: 290px;
+                }
+
+                    /*.employee-profile-dialog .dialog-content .dialog-content-right .small-info input.calender {
                         background-image: url('../../content/img/calender.jpg');
                         background-repeat: no-repeat;
                         background-size: 16px;
@@ -165,7 +169,7 @@
                         background-repeat: no-repeat;
                         background-size: 16px;
                         background-position: 264px center;
-                    }
+                    }*/
 
     .employee-profile-dialog .dialog-footer {
         height: 60px;

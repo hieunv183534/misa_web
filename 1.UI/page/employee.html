@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--<link href="../lib/bootstrap-4.6.0-dist/css/bootstrap.css" rel="stylesheet" />-->
     <link href="../content/font/fontawesome-5.15.1/css/all.css" rel="stylesheet" />
     <link href="../css/main.css" rel="stylesheet" />
     <title>Document</title>
 </head>
 <body>
+
     <div class="menu">
         <div class="menu-header">
             <div class="toggle"></div>
@@ -89,7 +91,7 @@
                     </thead>
                 </table>
                 <table class="tb-body" border="0">
-                    <colgroup>
+                    <!--<colgroup>
                         <col>
                         <col>
                         <col>
@@ -100,7 +102,7 @@
                         <col>
                         <col style="text-align:right;">
                         <col>
-                    </colgroup>
+                    </colgroup>-->
                     <tbody>
                         <tr>
                             <td>NV-532408</td>
@@ -111,7 +113,7 @@
                             <td>cuon@example.com</td>
                             <td>Giám đốc</td>
                             <td>Phòng Nhân sự</td>
-                            <td style="text-align:right">17.737.391</td>
+                            <td>17.737.391</td>
                             <td>Đang thử việc</td>
                         </tr>
                         <tr>
@@ -492,11 +494,13 @@
                     <div class="my-row">
                         <div class="small-info">
                             <p>Ngày sinh</p>
-                            <input class="calender" type="text" value="11/01/1989" />
+                            <input type="date" value="11/01/1989" />
                         </div>
                         <div class="small-info">
                             <p>Giới tính</p>
-                            <input class="down1" type="text" value="Nam" />
+                            <select>
+                                <option>Nam</option>
+                            </select>
                         </div>
                     </div>
                     <div class="my-row">
@@ -506,7 +510,7 @@
                         </div>
                         <div class="small-info">
                             <p>Ngày cấp</p>
-                            <input class="calender" type="text" value="11/04/2011" />
+                            <input type="date" value="11/04/2011" />
                         </div>
                     </div>
                     <div class="my-row">
@@ -534,11 +538,15 @@
                     <div class="my-row">
                         <div class="small-info">
                             <p>Vị trí</p>
-                            <input class="down1" type="text" value="Giám đốc" />
+                            <select>
+                                <option>Giám đốc</option>
+                            </select>
                         </div>
                         <div class="small-info">
                             <p>Phòng ban</p>
-                            <input class="down1" type="text" value="Phòng quản trị" />
+                            <select class="chondi">
+                                <option>Phòng quản trị</option>
+                            </select>
                         </div>
                     </div>
                     <div class="my-row">
@@ -554,11 +562,13 @@
                     <div class="my-row">
                         <div class="small-info">
                             <p>Ngày gia nhập công ty</p>
-                            <input class="calender" type="text" value="12/05/2015" />
+                            <input type="date" value="12/05/2015" />
                         </div>
                         <div class="small-info">
                             <p>Tình trạng công việc</p>
-                            <input class="down1" type="text" value="Đang làm việc" />
+                            <select>
+                                <option>Đang làm việc</option>
+                            </select>
                         </div>
                     </div>
                 </div>
