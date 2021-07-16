@@ -4,6 +4,7 @@
 @import url('base/grid.css');
 @import url('base/dialog.css');
 @import url('base/select.css');
+@import url('base/combobox.css');
 
 @font-face {
     font-family: 'GoogleSans-Bold';

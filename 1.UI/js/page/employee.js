@@ -1,6 +1,7 @@
 ﻿$(document).ready(function () {
     $(".employee-profile-dialog").hide();
     $(".dialog-modal").hide();
+    $(".combobox .combobox-data").hide();
 })
 
 
@@ -23,3 +24,11 @@ $(".employee-profile-dialog .dialog-header button.btn-exit").click(function () {
     $(".employee-profile-dialog").hide();
     $(".dialog-modal").hide();
 });
+
+
+$(".combobox button").click(function () {
+    $(".combobox .combobox-data").show();
+})
+$(".combobox .combobox-item").click(function () {
+    $(".combobox .combobox-data").hide();
+})
