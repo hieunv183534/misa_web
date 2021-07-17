@@ -36,7 +36,7 @@
             display: block;
             line-height: 72px;
             padding-left: 24px;
-            margin:0;
+            margin: 0;
         }
 
         .employee-profile-dialog .dialog-header button.btn-exit {
@@ -73,8 +73,8 @@
                 width: 167px;
                 height: 167px;
                 background-image: url('../../content/img/default-avatar.jpg');
-                background-repeat:no-repeat;
-                background-size:contain;
+                background-repeat: no-repeat;
+                background-size: contain;
                 border-radius: 50%;
                 border: 1px solid #BDBEC0;
                 margin: 10px auto;
@@ -90,7 +90,7 @@
             width: calc(100% - 200px);
             height: 100%;
             float: left;
-            overflow-y:scroll;
+            overflow-y: scroll;
         }
 
             .employee-profile-dialog .dialog-content .dialog-content-right .thongtinchung {
@@ -109,7 +109,7 @@
                 width: 100%;
                 height: 30px;
                 position: relative;
-                margin-bottom:24px;
+                margin-bottom: 24px;
             }
 
                 .employee-profile-dialog .dialog-content .dialog-content-right .title-info p {
@@ -161,7 +161,15 @@
                     width: 290px;
                 }
 
-                    /*.employee-profile-dialog .dialog-content .dialog-content-right .small-info input.calender {
+                    .employee-profile-dialog .dialog-content .dialog-content-right .small-info .dropdown p {
+                        margin: 0;
+                        line-height: 40px;
+                        font-size: 13px;
+                        margin-left: 10px;
+                        font-family: 'GoogleSans-Regular';
+                    }
+
+    /*.employee-profile-dialog .dialog-content .dialog-content-right .small-info input.calender {
                         background-image: url('../../content/img/calender.jpg');
                         background-repeat: no-repeat;
                         background-size: 16px;
@@ -174,7 +182,6 @@
                         background-size: 16px;
                         background-position: 264px center;
                     }*/
-
     .employee-profile-dialog .dialog-footer {
         height: 60px;
         width: 100%;
