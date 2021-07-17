@@ -77,6 +77,7 @@
         transition: 1s;
         background-color: white;
         z-index: 99;
+        box-shadow: 1px 2px 4px 1px #454545;
     }
 
     .dropdown .dropdown-data .dropdown-item {
