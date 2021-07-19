@@ -55,6 +55,10 @@
             transition: 1s;
         }
 
+        .dropdown .dropdown-main:focus {
+            border-color: #019160;
+        }
+
 
 
     .dropdown .dropdown-data {
@@ -68,6 +72,7 @@
         /* display: none; */
         transition: 1s;
         overflow-y: scroll;
+        overflow-y: overlay;
     }
 
     .dropdown .dropdown-main:focus ~ .dropdown-data {

@@ -5,13 +5,13 @@
 
     //setTimeout(fakeData(), 100);
 
-    new EmployeeJS();
+    new CustomerJS();
 })
 
 /**
  * Class quản lí các sự kiện cho trang employee
  * */
-class EmployeeJS extends BaseJS {
+class CustomerJS extends BaseJS{
     constructor() {
         /*this.loadData();*/
         super();
@@ -42,10 +42,6 @@ class EmployeeJS extends BaseJS {
     //                <td>`+ item['GenderName'] + `</td>
     //                <td>`+ item['PhoneNumber'] + `</td>
     //                <td>`+ item['Email'] + `</td>
-    //                <td>`+ item['QualificationName'] + `</td>
-    //                <td>`+ item['PositionName'] + `</td>
-    //                <td style="text-align:right;">`+ salary + `</td>
-    //                <td>`+ item['WorkStatus'] + `</td>
     //             </tr>`
     //            );
     //            $('.content .content-body .grid table.tb-body tbody').append(tr);
@@ -75,7 +71,7 @@ class EmployeeJS extends BaseJS {
      * */
     delete() {
 
-}
+    }
 }
 
 

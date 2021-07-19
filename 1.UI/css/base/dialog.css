@@ -91,6 +91,7 @@
             height: 100%;
             float: left;
             overflow-y: scroll;
+            /*-webkit-overflow-scrolling: touch;*/
         }
 
             .employee-profile-dialog .dialog-content .dialog-content-right .thongtinchung {
