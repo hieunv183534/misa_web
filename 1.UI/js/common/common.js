@@ -1,6 +1,8 @@
 ﻿/**------------------------------------------------------------------
  * Hàm format ngày tháng
+ * dạng ngày/tháng/năm
  * @param {any} _date
+ * Author: hieunv 
  */
 function formatDate(_date) {
     if (_date != null) {
@@ -21,6 +23,7 @@ function formatDate(_date) {
 /**-------------------------------------------------------------------
  * Hàm format lương
  * @param {any} _salary
+ * Author: hieunv
  */
 function formatSalary(_salary) {
     if (_salary != null) {

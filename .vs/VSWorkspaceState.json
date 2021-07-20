@@ -2,7 +2,11 @@
   "ExpandedNodes": [
     "",
     "\\1.UI",
-    "\\1.UI\\page"
+    "\\1.UI\\js",
+    "\\1.UI\\js\\common",
+    "\\1.UI\\js\\page",
+    "\\1.UI\\lib"
   ],
+  "SelectedNode": "\\1.UI\\js\\common\\base.js",
   "PreviewInSolutionExplorer": false
 }

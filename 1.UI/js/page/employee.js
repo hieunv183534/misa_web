@@ -1,10 +1,4 @@
 ﻿$(document).ready(function () {
-    //$(".employee-profile-dialog").hide();
-    //$(".dialog-modal").hide();
-    //$(".combobox .combobox-data").hide();
-
-    //setTimeout(fakeData(), 100);
-
     new EmployeeJS();
 })
 
@@ -13,97 +7,57 @@
  * */
 class EmployeeJS extends BaseJS {
     constructor() {
-        /*this.loadData();*/
         super();
     }
 
-    /**
-     * Load dữ liệu
-     * */
-    //loadData() {
-    //    //lấy dữ liệu về
-
-    //    $.ajax({
-    //        url: "http://cukcuk.manhnv.net/v1/Employees",
-    //        method: 'GET'
-    //    }).done(function (res) {
-    //        //binding dữ liệu lên trang web
-    //        var data = res;
-    //        $.each(data, function (index, item) {
-    //            var dateOfBirth = item['DateOfBirth'];
-    //            dateOfBirth = formatDate(dateOfBirth);
-    //            var salary = item['Salary'];
-    //            salary = formatSalary(salary);
-    //            var tr = $(
-    //                `<tr>
-    //                <td>`+ item['EmployeeCode'] + `</td>
-    //                <td>`+ item['FullName'] + `</td>
-    //                <td>`+ dateOfBirth + `</td>
-    //                <td>`+ item['GenderName'] + `</td>
-    //                <td>`+ item['PhoneNumber'] + `</td>
-    //                <td>`+ item['Email'] + `</td>
-    //                <td>`+ item['QualificationName'] + `</td>
-    //                <td>`+ item['PositionName'] + `</td>
-    //                <td style="text-align:right;">`+ salary + `</td>
-    //                <td>`+ item['WorkStatus'] + `</td>
-    //             </tr>`
-    //            );
-    //            $('.content .content-body .grid table.tb-body tbody').append(tr);
-    //        })
-    //    }).fail(function (res) {
-
-    //    });
-    //}
-
-    /**
-     * Thêm mới dữ liệu
-     * */
-    add() {
-
+    setDataUrl() {
+        this.dataUrl = "http://cukcuk.manhnv.net/v1/Employees";
     }
-
-    /**
-     * Sửa dữ liệu
-     * */
-    edit() {
-
-    }
-
-
-    /**
-     * Xóa dữ liệu
-     * */
-    delete() {
-
-}
+    
 }
 
 
+// menu toggle click
+$('.toggle.btn-inline').click(function (e) {
+    /*e.preventDefault();*/
+    if ($('.menu').width() > 50) {
+        $('.menu').width(48);
+        $('.menu p').hide();
+        $('.menu .menu-header .logo').hide();
+        $(".content").animate(
+            {
+                left: "52px",
+                width: "100%",
+            },
+            0,
+            () => {
+                $(".content").css("width", "calc(100% - 52px)")
+            }
+        )
+    } else {
+        $('.menu').width(225);
+        setTimeout(function () {
+            $('.menu p').show();
+            $('.menu .menu-header .logo').show();
+        }, 500);      
+        $(".content").animate(
+            {
+                left: "227px",
+            },
+            0,
+            () => {
+                $(".content").css("width", "calc(100% - 227px)")
+            }
+        )
+    }
+});
 
-//$(".content .content-body .grid table.tb-body tbody tr").dblclick(function () {
-//    $(".employee-profile-dialog").show();
-//    $(".dialog-modal").show();
-//});
 
-//$(".btn-cancel").click(function () {
-//    $(".employee-profile-dialog").hide();
-//    $(".dialog-modal").hide();
-//});
-
-//$(".btn-save").click(function () {
-//    $(".employee-profile-dialog").hide();
-//    $(".dialog-modal").hide();
-//});
-
-//$(".employee-profile-dialog .dialog-header button.btn-exit").click(function () {
-//    $(".employee-profile-dialog").hide();
-//    $(".dialog-modal").hide();
-//});
-
-
-//$(".combobox button").click(function () {
-//    $(".combobox .combobox-data").show();
-//})
-//$(".combobox .combobox-item").click(function () {
-//    $(".combobox .combobox-data").hide();
-//})
+// hide show dialog
+setTimeout(function () {
+    console.log($('.content .content-body .grid table.tb-body tbody tr'))
+    $('.content .content-body .grid table.tb-body tbody tr').dblclick(function (e) {
+        $('.dialog').css("visibility", "visible");
+        $('#autofocus').focus();
+    })
+}, 3000);

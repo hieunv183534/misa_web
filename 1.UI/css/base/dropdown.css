@@ -72,7 +72,7 @@
         /* display: none; */
         transition: 1s;
         overflow-y: scroll;
-        overflow-y: overlay;
+        /*overflow-y: overlay;*/
     }
 
     .dropdown .dropdown-main:focus ~ .dropdown-data {

@@ -83,7 +83,7 @@ button {
             background-color: #2FBE8E;
         }
 
-        .content .content-body .content-paging .paging-center button.btn-inline {
+        /*.content .content-body .content-paging .paging-center button*/.btn-inline {
             border: none;
             outline: none;
             background-color: #ffffff;
