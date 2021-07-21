@@ -78,7 +78,7 @@
     .dropdown .dropdown-main:focus ~ .dropdown-data {
         /* height: auto;
     max-height: 210px; */
-        height: 210px;
+        height: 140px;
         transition: 1s;
         background-color: white;
         z-index: 99;

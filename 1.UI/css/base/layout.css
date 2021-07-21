@@ -50,6 +50,10 @@
             transition: 0s;
         }
 
+            .menu .menu-body .menu-item.menu-item-selected {
+                background-color: #019160;
+            }
+
             .menu .menu-body .menu-item .menu-icon {
                 width: 20px;
                 height: 20px;

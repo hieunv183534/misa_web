@@ -35,3 +35,21 @@ input {
         background-size: 16px;
         padding-left: 40px;
     }
+
+input#inputSalary {
+    background-image: url(../../content/img/vnd.jpg);
+    background-repeat: no-repeat;
+    background-position-x: 243px;
+    background-position-y: 10px;
+    background-size: 38px;
+    padding-right: 50px;
+}
+
+
+/*input[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    top: -100%;
+    left: 0;
+    background-color:aqua;
+}*/

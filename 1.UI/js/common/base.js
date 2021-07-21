@@ -1,39 +1,13 @@
 ﻿
-
 class BaseJS {
     constructor() {
         this.dataUrl = "";
         this.setDataUrl();
         this.loadData();
-        this.initEvent();
     }
 
     setDataUrl() {
 
-    }
-
-    initEvent() {
-        //Sự kiện khi click thêm mới
-        $('#btnAdd').click(function (e) {
-            $('.dialog').css("visibility", "visible");
-            $('#autofocus').focus();
-        })
-        //Sự kiện khi click exit trên form thông tin
-        $('#btnExit').click(function (e) {
-            $('.dialog').css("visibility", "hidden");
-        })
-        //Sự kiện khi click save trên form thông tin
-        $('#btnSave').click(function (e) {
-            alert("Lưu dữ liệu");
-        })
-        //Sự kiện khi click hủy trên form thông tin
-        $('#btnCancel').click(function (e) {
-            $('.dialog').css("visibility", "hidden");
-        })
-        //Sự kiện khi click refresh trên form thông tin
-        $('#btnRefresh').click(function (e) {
-            alert("Tải lại dữ liệu");
-        })
     }
 
     loadData() {
@@ -51,7 +25,11 @@ class BaseJS {
                     $.each(cols, function (index, th) {
                         var td = $(`<td></td>`);
                         var fieldName = $(th).attr('fieldName');
-                        var value = obj[fieldName];
+                        if (fieldName == 'WorkStatus') {
+                            var value = (obj[fieldName] == 1) ? "Đang làm việc" : "Đã nghỉ việc";
+                        } else {
+                            var value = obj[fieldName];
+                        }
                         var formatType = $(th).attr('formatType');
                         switch (formatType) {
                             case 'ddmmyyyy':

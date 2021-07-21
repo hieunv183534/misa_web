@@ -33,3 +33,13 @@ function formatSalary(_salary) {
         return '';
     }
 }
+
+
+/**
+ * Hàm kiểm tra email có đúng định dạng không
+ * @param {any} email
+ */
+function validateEmail(email) {
+    const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+}
