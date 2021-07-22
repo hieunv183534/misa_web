@@ -208,14 +208,24 @@
                 font-size:20px;
             }
 
-        .content .content-body .content-toolbar {
-            width: 100%;
-            height: 40px;
-            float: left;
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
+            .content .content-body .content-title > span{
+                width:auto;
+                display:flex;
+                justify-content:flex-end;
+            }
+
+                .content .content-body .content-title > span #btnDelete{
+                    margin-right:16px;
+                }
+
+                .content .content-body .content-toolbar {
+                    width: 100%;
+                    height: 40px;
+                    float: left;
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 10px;
+                }
 
             .content .content-body .content-toolbar .toolbar-left {
                 height: 100%;

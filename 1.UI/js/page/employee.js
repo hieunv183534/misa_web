@@ -1,14 +1,17 @@
 ﻿flagAdd = 1;
 myEmployeeId = '';
 
+
 $(document).ready(function () {
     new EmployeeJS();
 })
+
 
 /**
  * Class quản lí các sự kiện cho trang employee
  * */
 class EmployeeJS extends BaseJS {
+    static checkedEmployees = [];
     constructor() {
         super();
         this.initEvent();
@@ -44,7 +47,7 @@ class EmployeeJS extends BaseJS {
         $('#btnRefresh').click(btnRefreshOnClick);
 
         //6.Sự kiện khi dbclick 1 hàng trên bảng
-        $('.grid table.tb-body').on('dblclick', 'tbody tr', tableRowOnDbClick);
+        $('.grid table').on('dblclick', 'tbody tr', tableRowOnDbClick);
 
         //7.Sự kiện khi click vào toggle
         $('#btnToggle').click(btnToggleOnClick);
@@ -58,6 +61,9 @@ class EmployeeJS extends BaseJS {
 
         //10. Lương đúng định dạng
         $('input#inputSalary').blur(checkSalary);
+
+        //11. Xóa các nhân viên được chọn
+        $('#btnDelete').click(btnDeleteOnClick);
     }
 }
 
@@ -146,6 +152,34 @@ function btnSaveOnClick(e) {
         alert("Vui lòng kiểm tra lại email và lương!");
     }
 
+}
+
+
+/**
+ * Xóa những bản ghi được chọn khi click vào btnDelete
+ * */
+function btnDeleteOnClick() {
+    var employees = EmployeeJS.checkedEmployees;
+    var resSuccess = 0;
+    if (employees.length == 0) {
+        alert("Bạn chưa chọn bản ghi nào cả!");
+    } else {
+        $.each(employees, function (index, item) {
+            $.ajax({
+                url: "http://cukcuk.manhnv.net/v1/Employees/" + item,
+                method: 'DELETE'
+            }).done(res => {
+                resSuccess++;
+                EmployeeJS.checkedEmployees = EmployeeJS.checkedEmployees.filter(e => e !== item);
+            }).fail(res => {
+                console.log(res);
+            })
+        })
+        setTimeout(() => {
+            loadData();
+            alert("Đã xóa thành công" + resSuccess + "/" + (employees.length) + "bản ghi được chọn!");
+        }, 1000)
+    }
 }
 
 function btnCancelOnClick(e) {
@@ -296,11 +330,11 @@ function checkSalary() {
  * Author: hieunv (21/07/2021)
  * */
 function loadData() {
-    $('.grid table.tb-body tbody').empty();
+    $('.grid table tbody').empty();
     try {
         this.dataUrl = "http://cukcuk.manhnv.net/v1/Employees";
         // lấy thông tin các cột dữ liệu
-        var cols = $('.grid table.tb-head thead th');
+        var cols = $('.grid table thead th');
 
         //Lấy thông tin tương ứng với các cột để map vào
         $.ajax({
@@ -314,6 +348,8 @@ function loadData() {
                     var fieldName = $(th).attr('fieldName');
                     if (fieldName == 'WorkStatus') {
                         var value = (obj[fieldName] == 1) ? "Đang làm việc" : "Đã nghỉ việc";
+                    } else if (fieldName == 'check') {
+                        var value = $(`<input onclick="checkcheck($(this))" type="checkbox" style="width:46px; height:24px;"/>`);
                     } else {
                         var value = obj[fieldName];
                     }
@@ -321,11 +357,9 @@ function loadData() {
                     switch (formatType) {
                         case 'ddmmyyyy':
                             value = formatDate(value);
-                            td = $(`<td style="text-align:center;"></td>`);
                             break;
                         case 'money':
                             value = formatSalary(value);
-                            td = $(`<td style="text-align:right;"></td>`);
                             break;
                         default:
                             break;
@@ -334,9 +368,10 @@ function loadData() {
                     $(td).append(value);
                     $(tr).append(td);
                 })
+                tr.attr('bgindex', index);
                 tr.attr('idobj', obj.EmployeeId);
-                
-                $('.grid table.tb-body tbody').append(tr);
+
+                $('.grid table tbody').append(tr);
             })
         }).fail(function (res) {
 
@@ -378,7 +413,7 @@ function loadDropdownData(fieldName) {
     })
 }
 
-function matchItemDropdown(fieldName,value) {
+function matchItemDropdown(fieldName, value) {
     myDropdownItems = $(`#input${fieldName} .dropdown-data .dropdown-item`);
     $(`#input${fieldName}`).attr('value', value);
     $.each(myDropdownItems, function (index, item) {

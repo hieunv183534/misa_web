@@ -62,10 +62,16 @@
         <div class="content-body">
             <div class="content-title">
                 <b>Danh sách nhân viên</b>
-                <button id="btnAdd" class="button button-icon">
-                    <i class="fas fa-user-plus"></i>
-                    <p>Thêm nhân viên</p>
-                </button>
+                <span>
+                    <button id="btnDelete" class="button button-icon">
+                        <i class="fas fa-trash-alt"></i>
+                        <p>Xóa nhân viên</p>
+                    </button>
+                    <button id="btnAdd" class="button button-icon">
+                        <i class="fas fa-user-plus"></i>
+                        <p>Thêm nhân viên</p>
+                    </button>
+                </span>          
             </div>
             <div class="content-toolbar">
                 <div class="toolbar-left">
@@ -169,40 +175,32 @@
                     </button>
                 </div>
             </div>
+            <!--grid start here-->
             <div class="grid">
-                <table class="tb-head" border="0">
+                <table>
                     <thead>
                         <tr>
-                            <th fieldName="EmployeeCode">Mã nhân viên</th>
-                            <th fieldName="FullName">Họ và tên</th>
-                            <th fieldName="DateOfBirth" formatType="ddmmyyyy">Ngày sinh</th>
-                            <th fieldName="GenderName">Giới tính</th>
-                            <th fieldName="PhoneNumber">Điện thoại</th>
-                            <th fieldName="Email">Email</th>
-                            <th fieldName="DepartmentName">Phòng ban</th>
-                            <th fieldName="PositionName" class="text-align-right">Chức vụ</th>
-                            <th fieldName="Salary" formatType="money">Mức lương cơ bản</th>
-                            <th fieldName="WorkStatus">Tình trạng công việc</th>
+                            <th fieldName="check" class="checkbox">#</th>
+                            <th fieldName="EmployeeCode" style="text-align:left;">Mã nhân viên</th>
+                            <th fieldName="FullName" style="text-align:left;">Họ và tên</th>
+                            <th fieldName="DateOfBirth" formatType="ddmmyyyy" style="text-align:center;">Ngày sinh</th>
+                            <th fieldName="GenderName" style="text-align:left;">Giới tính</th>
+                            <th fieldName="PhoneNumber" style="text-align:left;">Điện thoại</th>
+                            <th fieldName="Email" style="text-align:left;">Email</th>
+                            <th fieldName="DepartmentName" style="text-align:left;">Phòng ban</th>
+                            <th fieldName="PositionName" style="text-align:left;">Chức vụ</th>
+                            <th fieldName="Salary" formatType="money" style="text-align:right;">Mức lương cơ bản</th>
+                            <th fieldName="WorkStatus" style="text-align:left;">Tình trạng công việc</th>
                         </tr>
                     </thead>
-                </table>
-                <table class="tb-body" border="0">
-                    <!--<colgroup>
-                        <col/>
-                        <col/>
-                        <col/>
-                        <col/>
-                        <col/>
-                        <col/>
-                        <col/>
-                        <col/>
-                        <col style="text-align:right;"/>
-                        <col/>
-                    </colgroup>-->
                     <tbody>
+                        <!-- table data here -->
                     </tbody>
                 </table>
+
             </div>
+
+            <!--grid end here-->
             <div class="content-paging">
                 <div class="paging-left">
                     <p>Hiển thị 1-10/1000 nhân viên</p>

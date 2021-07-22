@@ -46,6 +46,13 @@ input#inputSalary {
 }
 
 
+
+/*checkbox*/
+
+/*input.checkbox{
+    width:40px;
+}*/
+
 /*input[title]:hover::after {
     content: attr(title);
     position: absolute;

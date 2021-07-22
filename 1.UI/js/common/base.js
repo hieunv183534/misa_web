@@ -13,7 +13,7 @@ class BaseJS {
     loadData() {
         try {
             // lấy thông tin các cột dữ liệu
-            var cols = $('.grid table.tb-head thead th');
+            var cols = $('.grid table thead th');
 
             //Lấy thông tin tương ứng với các cột để map vào
             $.ajax({
@@ -27,18 +27,18 @@ class BaseJS {
                         var fieldName = $(th).attr('fieldName');
                         if (fieldName == 'WorkStatus') {
                             var value = (obj[fieldName] == 1) ? "Đang làm việc" : "Đã nghỉ việc";
-                        } else {
+                        } else if (fieldName == 'check') {
+                            var value = $(`<input type="checkbox" onclick="checkcheck($(this))" style="width:46px; height:24px;"/>`);
+                        }else {
                             var value = obj[fieldName];
                         }
                         var formatType = $(th).attr('formatType');
                         switch (formatType) {
                             case 'ddmmyyyy':
                                 value = formatDate(value);
-                                td = $(`<td style="text-align:center;"></td>`);
                                 break;
                             case 'money':
                                 value = formatSalary(value);
-                                td = $(`<td style="text-align:right;"></td>`);
                                 break;
                             default:
                                 break;
@@ -47,8 +47,9 @@ class BaseJS {
                         $(td).append(value);
                         $(tr).append(td);
                     })
+                    tr.attr('bgindex', index);
                     tr.attr('idobj', obj.EmployeeId);
-                    $('.grid table.tb-body tbody').append(tr);
+                    $('.grid table tbody').append(tr);
                 })
             }).fail(function (res) {
 
