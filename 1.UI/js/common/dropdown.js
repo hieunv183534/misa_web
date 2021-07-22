@@ -14,7 +14,6 @@ $('.dropdown .dropdown-data').on('click', '.dropdown-item',
         var thisValueId = $(this).attr("valueid");
         var thisValueName = $(this).attr("valuename");
         $(this).parents('.dropdown').attr("value", thisValueId);
-        /*$(this).parents('.dropdown').find('.dropdown-main p')*/
         $(this).parents('.dropdown').find('.dropdown-main p').append(thisValueName);
     }
 

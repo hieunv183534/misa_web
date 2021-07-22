@@ -107,7 +107,7 @@ function btnSaveOnClick(e) {
         employee.EmployeeCode = $('#inputEmployeeCode').val();
         employee.FullName = $('#inputFullName').val();
         employee.DateOfBirth = $('#inputDateOfBirth').val();
-        employee.GenderName = $('#inputGenderName').attr('value');
+        employee.Gender = ($('#inputGenderName').attr('value') == "Nam") ? 1 : 0;
         employee.IdentityNumber = $('#inputIdentityNumber').val();
         employee.IdentityDate = $('#inputIdentityDate').val();
         employee.IdentityPlace = $('#inputIdentityPlace').val();
@@ -167,28 +167,37 @@ function tableRowOnDbClick(e) {
         const employeeId = $(this).attr('idobj');
         myEmployeeId = employeeId;
         var myUrl = "http://cukcuk.manhnv.net/v1/Employees/" + employeeId;
-        console.log(employeeId);
         $.ajax({
             url: myUrl,
             method: 'GET'
         }).done(function (res) {
             var employee = res;
-            console.log(employee);
             $('#inputEmployeeCode').val(res['EmployeeCode']);
             $('#inputFullName').val(res['FullName']);
             $('#inputDateOfBirth').val(res['DateOfBirth']);
             $('#inputGenderName').attr('value');
+            //match drropdown GenderName
+            var value = res['GenderName'];
+            matchItemDropdown('GenderName', value);
+
             $('#inputIdentityNumber').val(res['IdentityNumber']);
             $('#inputIdentityDate').val(res['IdentityDate']);
             $('#inputIdentityPlace').val(res['IdentityPlace']);
             $('#inputEmail').val(res['Email']);
             $('#inputPhoneNumber').val(res['PhoneNumber']);
-            $('#inputPositionName').attr('value');
-            $('#inputDepartmentName').attr('value');
+            //match dropdown PostionName
+            var value = res['PositionId'];
+            matchItemDropdown('PositionName', value);
+            //match dropdown DepartmentName
+            var value = res['DepartmentId'];
+            matchItemDropdown('DepartmentName', value);
+
             $('#inputPersonalTaxCode').val(res['PersonalTaxCode']);
             $('#inputSalary').val(res['Salary']);
             $('#inputJoinDate').val(res['JoinDate']);
-            $('#inputWorkStatus').attr('value');
+            //match dropdown WorkStatus
+            var value = res['WorkStatus'];
+            matchItemDropdown('WorkStatus', value);
 
         }).fail(function (res) {
 
@@ -200,7 +209,6 @@ function tableRowOnDbClick(e) {
 
     }
 }
-
 
 /**
  * to collase menu when click toggle
@@ -255,7 +263,6 @@ function requiredNote() {
     }
 }
 
-
 /**
  * warning if invalid email
  * Author hieunv (21/07/2021)
@@ -283,7 +290,6 @@ function checkSalary() {
         $(this).removeAttr('title');
     }
 }
-
 
 /**
  * hàm load dữ liệu
@@ -340,7 +346,6 @@ function loadData() {
     }
 }
 
-
 /**
  * Load dữ liệu lên dropdown có tên trường tương ứng với fieldName
  * Auto select item đầu tiên trong sanh sách item
@@ -371,4 +376,18 @@ function loadDropdownData(fieldName) {
             }
         })
     })
+}
+
+function matchItemDropdown(fieldName,value) {
+    myDropdownItems = $(`#input${fieldName} .dropdown-data .dropdown-item`);
+    $(`#input${fieldName}`).attr('value', value);
+    $.each(myDropdownItems, function (index, item) {
+        $(item).removeClass('item-selected');
+        if (value == $(item).attr('valueid')) {
+            $(item).addClass('item-selected');
+            $(`#input${fieldName} .dropdown-main p`).empty();
+            $(`#input${fieldName} .dropdown-main p`).append($(item).attr('valuename'));
+        }
+    });
+    console.log($(`#input${fieldName}`).attr('value'));
 }
