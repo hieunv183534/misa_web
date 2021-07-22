@@ -1,4 +1,5 @@
-﻿
+﻿flagAdd = 1;
+myEmployeeId = '';
 
 $(document).ready(function () {
     new EmployeeJS();
@@ -11,10 +12,19 @@ class EmployeeJS extends BaseJS {
     constructor() {
         super();
         this.initEvent();
+        this.loadDropdown();
     }
 
     setDataUrl() {
         this.dataUrl = "http://cukcuk.manhnv.net/v1/Employees";
+    }
+
+    loadDropdown() {
+        //bind dữ liệu lên các dropdown
+        //1.Dropdown phòng ban
+        loadDropdownData("Department");
+        //2.Dropdown vị trí
+        loadDropdownData("Position");
     }
 
     initEvent() {
@@ -45,6 +55,9 @@ class EmployeeJS extends BaseJS {
 
         //9.Email đúng định dạng
         $('input#inputEmail').blur(checkEmail);
+
+        //10. Lương đúng định dạng
+        $('input#inputSalary').blur(checkSalary);
     }
 }
 
@@ -53,6 +66,7 @@ class EmployeeJS extends BaseJS {
 // functions event here
 
 function btnAddOnClick(e) {
+    flagAdd = 1;
     $('.dialog').css("visibility", "visible");
     $('.dialog input').val(null);
     $('.dialog input').removeClass('border-red');
@@ -67,11 +81,6 @@ function btnAddOnClick(e) {
     }).fail(res => {
 
     });
-    //bind dữ liệu lên các dropdown
-    //1.Dropdown phòng ban
-    loadDropdownData("Department");
-    //2.Dropdown vị trí
-    loadDropdownData("Position");
 }
 
 function btnExitOnClick(e) {
@@ -80,6 +89,17 @@ function btnExitOnClick(e) {
 
 // Thực hiện lưu dũe liệu
 function btnSaveOnClick(e) {
+    var myUrl = "http://cukcuk.manhnv.net/v1/Employees";
+    var method = 'POST';
+    //console.log(flagAdd);
+    //console.log(myEmployeeId);
+    if (flagAdd != 1) {
+        myUrl = "http://cukcuk.manhnv.net/v1/Employees/" + myEmployeeId;
+        method = 'PUT';
+    }
+    console.log(myUrl);
+    console.log(method);
+
     var email = $('#inputEmail').val();
     var salary = $('#inputSalary').val();
     if (validateEmail(email) && $.isNumeric(salary)) {
@@ -98,22 +118,26 @@ function btnSaveOnClick(e) {
         employee.PersonalTaxCode = $('#inputPersonalTaxCode').val();
         employee.Salary = $('#inputSalary').val();
         employee.JoinDate = $('#inputJoinDate').val();
-        employee.WorkStatus = $('#inputWorkStatus').attr('value');
+        employee.WorkStatus = ($('#inputWorkStatus').attr('value') == "Đang làm việc") ? 1 : 0;
 
-        debugger;
+        console.log(employee);
 
         // gọi ajax post dữ liệu
         $.ajax({
-            url: "http://cukcuk.manhnv.net/v1/Employees",
-            method: 'POST',
+            url: myUrl,
+            method: method,
             data: JSON.stringify(employee),
             dataType: 'json',
             contentType: 'application/json'
         }).done(res => {
-            alert('Thêm mới thành công!');
+            if (flagAdd == 1) {
+                alert('Thêm mới thành công!');
+            } else {
+                alert('Cập nhật thông tin thành công!');
+            }
         }).fail(res => {
             alert("Đã có lỗi xảy ra!");
-        })
+        });
 
         // Ẩn dialog đi và load lại dữ liệu
         setTimeout(loadData, 2000);
@@ -132,11 +156,56 @@ function btnRefreshOnClick(e) {
     loadData();
 }
 
+/**
+ * biding thông tin nhân viên được chọn lên form
+ * @param {any} e
+ */
 function tableRowOnDbClick(e) {
-    $('.dialog').css("visibility", "visible");
-    $('.autofocus').focus();
+    flagAdd = 0;
+    try {
+        // Gọi api lấy dữ liệu
+        const employeeId = $(this).attr('idobj');
+        myEmployeeId = employeeId;
+        var myUrl = "http://cukcuk.manhnv.net/v1/Employees/" + employeeId;
+        console.log(employeeId);
+        $.ajax({
+            url: myUrl,
+            method: 'GET'
+        }).done(function (res) {
+            var employee = res;
+            console.log(employee);
+            $('#inputEmployeeCode').val(res['EmployeeCode']);
+            $('#inputFullName').val(res['FullName']);
+            $('#inputDateOfBirth').val(res['DateOfBirth']);
+            $('#inputGenderName').attr('value');
+            $('#inputIdentityNumber').val(res['IdentityNumber']);
+            $('#inputIdentityDate').val(res['IdentityDate']);
+            $('#inputIdentityPlace').val(res['IdentityPlace']);
+            $('#inputEmail').val(res['Email']);
+            $('#inputPhoneNumber').val(res['PhoneNumber']);
+            $('#inputPositionName').attr('value');
+            $('#inputDepartmentName').attr('value');
+            $('#inputPersonalTaxCode').val(res['PersonalTaxCode']);
+            $('#inputSalary').val(res['Salary']);
+            $('#inputJoinDate').val(res['JoinDate']);
+            $('#inputWorkStatus').attr('value');
+
+        }).fail(function (res) {
+
+        })
+
+        $('.dialog').css("visibility", "visible");
+        $('.autofocus').focus();
+    } catch (e) {
+
+    }
 }
 
+
+/**
+ * to collase menu when click toggle
+ * @param {any} e
+ */
 function btnToggleOnClick(e) {
     /*e.preventDefault();*/
     if ($('.menu').width() > 50) {
@@ -186,12 +255,29 @@ function requiredNote() {
     }
 }
 
+
+/**
+ * warning if invalid email
+ * Author hieunv (21/07/2021)
+ * */
 function checkEmail() {
     var email = $(this).val()
     if (!validateEmail(email)) {
         // chuyển border thành màu đỏ cảnh báo và khi hover hiện thông tin cảnh báo
         $(this).addClass('border-red');
         $(this).attr('title', 'Email không đúng đinh dạng!');
+    } else {
+        $(this).removeClass('border-red');
+        $(this).removeAttr('title');
+    }
+}
+
+function checkSalary() {
+    var salary = $(this).val()
+    if (!$.isNumeric(salary)) {
+        // chuyển border thành màu đỏ cảnh báo và khi hover hiện thông tin cảnh báo
+        $(this).addClass('border-red');
+        $(this).attr('title', 'Salary không đúng đinh dạng!');
     } else {
         $(this).removeClass('border-red');
         $(this).removeAttr('title');
@@ -242,6 +328,8 @@ function loadData() {
                     $(td).append(value);
                     $(tr).append(td);
                 })
+                tr.attr('idobj', obj.EmployeeId);
+                
                 $('.grid table.tb-body tbody').append(tr);
             })
         }).fail(function (res) {

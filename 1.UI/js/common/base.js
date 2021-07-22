@@ -47,6 +47,7 @@ class BaseJS {
                         $(td).append(value);
                         $(tr).append(td);
                     })
+                    tr.attr('idobj', obj.EmployeeId);
                     $('.grid table.tb-body tbody').append(tr);
                 })
             }).fail(function (res) {
