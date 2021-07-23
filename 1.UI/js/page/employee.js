@@ -114,12 +114,12 @@ function btnSaveOnClick(e) {
 
     var email = $('#inputEmail').val();
     var salary = $('#inputSalary').val();
-    if (validateEmail(email) && $.isNumeric(salary)) {
+    if (validateEmail(email) && $.isNumeric(salary.replaceAll('.',''))) {
         var employee = {};
         employee.EmployeeCode = $('#inputEmployeeCode').val();
         employee.FullName = $('#inputFullName').val();
         employee.DateOfBirth = $('#inputDateOfBirth').val();
-        employee.Gender = ($('#inputGenderName').attr('value') == "Nam") ? 1 : 0;
+        employee.Gender = $('#inputGenderName').attr('value');
         employee.IdentityNumber = $('#inputIdentityNumber').val();
         employee.IdentityDate = $('#inputIdentityDate').val();
         employee.IdentityPlace = $('#inputIdentityPlace').val();
@@ -128,9 +128,9 @@ function btnSaveOnClick(e) {
         employee.PositionId = $('#inputPositionName').attr('value');
         employee.DepartmentId = $('#inputDepartmentName').attr('value');
         employee.PersonalTaxCode = $('#inputPersonalTaxCode').val();
-        employee.Salary = $('#inputSalary').val();
+        employee.Salary = $('#inputSalary').val().replaceAll('.','');
         employee.JoinDate = $('#inputJoinDate').val();
-        employee.WorkStatus = ($('#inputWorkStatus').attr('value') == "Đang làm việc") ? 1 : 0;
+        employee.WorkStatus = $('#inputWorkStatus').attr('value');
 
 
         // gọi ajax post dữ liệu
@@ -217,7 +217,7 @@ function tableRowOnDbClick(e) {
             $('#inputDateOfBirth').val(formatDateToValue(res['DateOfBirth']));
             $('#inputGenderName').attr('value');
             //match drropdown GenderName
-            var value = res['GenderName'];
+            var value = res['Gender'];
             matchItemDropdown('GenderName', value);
             $('#inputIdentityNumber').val(res['IdentityNumber']);
             $('#inputIdentityDate').val(formatDateToValue(res['IdentityDate']));
