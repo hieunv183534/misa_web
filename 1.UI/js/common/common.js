@@ -19,6 +19,21 @@ function formatDate(_date) {
     }
 }
 
+function formatDateToValue(_date) {
+    if (_date != null) {
+        var date = new Date(_date);
+        var day = date.getDate();
+        day = (day < 10) ? '0' + day : day;
+        var month = date.getMonth() + 1;
+        month = (month < 10) ? '0' + month : month;
+        var year = date.getFullYear();
+        return year+'-'+month+'-'+day;
+    }
+    else {
+        return '';
+    }
+}
+
 
 /**-------------------------------------------------------------------
  * Hàm format lương
@@ -27,8 +42,9 @@ function formatDate(_date) {
  */
 function formatSalary(_salary) {
     if (_salary != null) {
-        var salary = _salary.toFixed(0).replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1.");
-        return salary;
+        /*var salary = _salary.toFixed(0).replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1.");*/
+        return _salary.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+        /*return salary;*/
     } else {
         return '';
     }
@@ -58,10 +74,9 @@ function checkcheck(thischeck) {
 
         thischeck.parents('tr').css('background-color', "#E3F3EE");
         EmployeeJS.checkedEmployees.push(thischeck.parents('tr').attr('idobj'));
-        console.log(EmployeeJS.checkedEmployees);
-
+        $('#btnDelete').css('visibility', 'visible');
     } else {
-        
+
         if (thischeck.parents('tr').attr('bgindex') % 2 == 0) {
             thischeck.parents('tr').css('background-color', '#FFF3EB');
         } else {
@@ -69,6 +84,8 @@ function checkcheck(thischeck) {
         }
 
         EmployeeJS.checkedEmployees = EmployeeJS.checkedEmployees.filter(e => e !== thischeck.parents('tr').attr('idobj'));
-        console.log(EmployeeJS.checkedEmployees);
+        if (EmployeeJS.checkedEmployees == 0) {
+            $('#btnDelete').css('visibility', 'hidden');
+        }
     }
 }

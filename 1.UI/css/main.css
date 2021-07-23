@@ -25,6 +25,36 @@
     src: url('../content/font/GoogleSans-Regular.otf') format('opentype');
 }
 
+
+::-webkit-scrollbar {
+    width: 2px;
+    background-color: #ffffff;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: grey;
+    border-radius: 4px;
+}
+
+.grid *:hover::-webkit-scrollbar {
+    width: 8px;
+    background-color: lightgray;
+}
+
+/*.dropdown * :-webkit-scrollbar {
+    width: 1px;
+    background-color: #ffffff;
+    border-radius: 1px;
+}
+
+.dropdown *:-webkit-scrollbar-thumb {
+    background-color: grey;
+    border-radius: 1px;
+}
+*/
+
+
 body{
     margin: 0;
     padding: 0;

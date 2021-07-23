@@ -64,12 +64,20 @@ class EmployeeJS extends BaseJS {
 
         //11. Xóa các nhân viên được chọn
         $('#btnDelete').click(btnDeleteOnClick);
+
+        //12.Format Salary when inputSalary keydown
+        $('input#inputSalary').keyup(inputSalaryOnKeyup)
     }
 }
 
 
-
 // functions event here
+
+
+function inputSalaryOnKeyup() {
+    var valueSalary = $(this).val().replaceAll('.', '');
+    $(this).val(formatSalary(valueSalary));
+}
 
 function btnAddOnClick(e) {
     flagAdd = 1;
@@ -103,8 +111,6 @@ function btnSaveOnClick(e) {
         myUrl = "http://cukcuk.manhnv.net/v1/Employees/" + myEmployeeId;
         method = 'PUT';
     }
-    console.log(myUrl);
-    console.log(method);
 
     var email = $('#inputEmail').val();
     var salary = $('#inputSalary').val();
@@ -126,7 +132,6 @@ function btnSaveOnClick(e) {
         employee.JoinDate = $('#inputJoinDate').val();
         employee.WorkStatus = ($('#inputWorkStatus').attr('value') == "Đang làm việc") ? 1 : 0;
 
-        console.log(employee);
 
         // gọi ajax post dữ liệu
         $.ajax({
@@ -178,6 +183,7 @@ function btnDeleteOnClick() {
         setTimeout(() => {
             loadData();
             alert("Đã xóa thành công" + resSuccess + "/" + (employees.length) + "bản ghi được chọn!");
+            $('#btnDelete').css('visibility', 'hidden');
         }, 1000)
     }
 }
@@ -208,14 +214,13 @@ function tableRowOnDbClick(e) {
             var employee = res;
             $('#inputEmployeeCode').val(res['EmployeeCode']);
             $('#inputFullName').val(res['FullName']);
-            $('#inputDateOfBirth').val(res['DateOfBirth']);
+            $('#inputDateOfBirth').val(formatDateToValue(res['DateOfBirth']));
             $('#inputGenderName').attr('value');
             //match drropdown GenderName
             var value = res['GenderName'];
             matchItemDropdown('GenderName', value);
-
             $('#inputIdentityNumber').val(res['IdentityNumber']);
-            $('#inputIdentityDate').val(res['IdentityDate']);
+            $('#inputIdentityDate').val(formatDateToValue(res['IdentityDate']));
             $('#inputIdentityPlace').val(res['IdentityPlace']);
             $('#inputEmail').val(res['Email']);
             $('#inputPhoneNumber').val(res['PhoneNumber']);
@@ -225,14 +230,12 @@ function tableRowOnDbClick(e) {
             //match dropdown DepartmentName
             var value = res['DepartmentId'];
             matchItemDropdown('DepartmentName', value);
-
             $('#inputPersonalTaxCode').val(res['PersonalTaxCode']);
             $('#inputSalary').val(res['Salary']);
-            $('#inputJoinDate').val(res['JoinDate']);
+            $('#inputJoinDate').val(formatDateToValue(res['JoinDate']));
             //match dropdown WorkStatus
             var value = res['WorkStatus'];
             matchItemDropdown('WorkStatus', value);
-
         }).fail(function (res) {
 
         })
@@ -315,7 +318,7 @@ function checkEmail() {
 
 function checkSalary() {
     var salary = $(this).val()
-    if (!$.isNumeric(salary)) {
+    if (!$.isNumeric( salary.replaceAll('.',''))) {
         // chuyển border thành màu đỏ cảnh báo và khi hover hiện thông tin cảnh báo
         $(this).addClass('border-red');
         $(this).attr('title', 'Salary không đúng đinh dạng!');
@@ -424,5 +427,4 @@ function matchItemDropdown(fieldName, value) {
             $(`#input${fieldName} .dropdown-main p`).append($(item).attr('valuename'));
         }
     });
-    console.log($(`#input${fieldName}`).attr('value'));
 }

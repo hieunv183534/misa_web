@@ -1,20 +1,10 @@
 
-::-webkit-scrollbar {
-    width: 4px;
-    background-color: lightgray;
-    border-radius: 4px;
-}
 
-::-webkit-scrollbar-thumb {
-    background-color: grey;
-    border-radius: 4px;
-}
-
-.dropdown {
-    width: 200px;
-    height: 40px;
-    position: relative;
-}
+    .dropdown {
+        width: 200px;
+        height: 40px;
+        position: relative;
+    }
 
     .dropdown p {
         margin: 0;
