@@ -202,6 +202,7 @@ function btnRefreshOnClick(e) {
  */
 function tableRowOnDbClick(e) {
     flagAdd = 0;
+    $('.dialog input').removeClass('border-red');
     try {
         // Gọi api lấy dữ liệu
         const employeeId = $(this).attr('idobj');
@@ -217,25 +218,26 @@ function tableRowOnDbClick(e) {
             $('#inputDateOfBirth').val(formatDateToValue(res['DateOfBirth']));
             $('#inputGenderName').attr('value');
             //match drropdown GenderName
-            var value = res['Gender'];
-            matchItemDropdown('GenderName', value);
+            var value1 = res['Gender'];
+            matchItemDropdown('GenderName', value1);
             $('#inputIdentityNumber').val(res['IdentityNumber']);
             $('#inputIdentityDate').val(formatDateToValue(res['IdentityDate']));
             $('#inputIdentityPlace').val(res['IdentityPlace']);
             $('#inputEmail').val(res['Email']);
             $('#inputPhoneNumber').val(res['PhoneNumber']);
             //match dropdown PostionName
-            var value = res['PositionId'];
-            matchItemDropdown('PositionName', value);
+            var value2 = res['PositionId'];
+            matchItemDropdown('PositionName', value2);
             //match dropdown DepartmentName
-            var value = res['DepartmentId'];
-            matchItemDropdown('DepartmentName', value);
+            var value3 = res['DepartmentId'];
+            matchItemDropdown('DepartmentName', value3);
             $('#inputPersonalTaxCode').val(res['PersonalTaxCode']);
-            $('#inputSalary').val(res['Salary']);
+            var valueSalary = res['Salary'];
+            $('#inputSalary').val(formatSalary(valueSalary));
             $('#inputJoinDate').val(formatDateToValue(res['JoinDate']));
             //match dropdown WorkStatus
-            var value = res['WorkStatus'];
-            matchItemDropdown('WorkStatus', value);
+            var value4 = res['WorkStatus'];
+            matchItemDropdown('WorkStatus', value4);
         }).fail(function (res) {
 
         })

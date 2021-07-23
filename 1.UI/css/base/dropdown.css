@@ -117,3 +117,36 @@
         .dropdown .dropdown-data .dropdown-item:last-child {
             margin-bottom: 5px;
         }
+
+
+
+        .dropdown.last-dropdown .dropdown-data {
+            top: 0px;
+        }
+
+        .dropdown.last-dropdown .dropdown-main:focus ~ .dropdown-data {
+            /* height: auto;
+    max-height: 210px; */
+            height: 140px;
+            transition: 1s;
+            background-color: white;
+            z-index: 99;
+            box-shadow: 1px -2px 4px 1px #454545;
+            top: -140px;
+        }
+
+
+/*dropdown restaurant*/
+
+.content .content-header .header-left .dropdown{
+    width:190px;
+}
+
+.content .content-header .header-left .dropdown .dropdown-main {
+    border: none;
+}
+
+.content .content-header .header-left .dropdown .dropdown-main p{
+    font-weight:bold;
+    font-size:15px;
+}

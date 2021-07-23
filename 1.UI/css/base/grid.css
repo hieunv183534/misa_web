@@ -48,6 +48,10 @@ th {
     height: 50px;
 }
 
+td{
+    height:48px;
+}
+
 
 tbody tr {
     border-bottom: 1px solid #E4E4E4;
