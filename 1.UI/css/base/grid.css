@@ -63,7 +63,7 @@ tbody tr {
     }
 
     tbody tr:hover {
-        background-color: #E9EBEE;
+        background-color: #E9EBEE !important;
     }
 
     tbody tr td input:checked{

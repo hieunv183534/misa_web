@@ -24,10 +24,15 @@ class EmployeeJS extends BaseJS {
 
     loadDropdown() {
         //bind dữ liệu lên các dropdown
-        //1.Dropdown phòng ban
-        loadDropdownData("Department");
-        //2.Dropdown vị trí
-        loadDropdownData("Position");
+        //1.Dropdown phòng ban form
+        loadDropdownData("Department",0);
+        //2.Dropdown vị trí form
+        loadDropdownData("Position",0);
+
+        //3.Dropdown phòng ban filter
+        loadDropdownData("Department",1);
+        //4.Dropdown vị trí filter
+        loadDropdownData("Position",1);
     }
 
     initEvent() {
@@ -66,7 +71,8 @@ class EmployeeJS extends BaseJS {
         $('#btnDelete').click(btnDeleteOnClick);
 
         //12.Format Salary when inputSalary keydown
-        $('input#inputSalary').keyup(inputSalaryOnKeyup)
+        $('input#inputSalary').keyup(inputSalaryOnKeyup);
+
     }
 }
 
@@ -112,9 +118,12 @@ function btnSaveOnClick(e) {
         method = 'PUT';
     }
 
+    var employeeCode = $('#inputEmployeeCode').val();
+    var fullName = $('#inputFullName').val();
+    var identityNumber = $('#inputIdentityNumber').val();
     var email = $('#inputEmail').val();
-    var salary = $('#inputSalary').val();
-    if (validateEmail(email) && $.isNumeric(salary.replaceAll('.',''))) {
+    var phoneNumber = $('#inputPhoneNumber').val();
+    if (!(employeeCode == '' || fullName == '' || identityNumber == '' || email == '' || phoneNumber == '')) {
         var employee = {};
         employee.EmployeeCode = $('#inputEmployeeCode').val();
         employee.FullName = $('#inputFullName').val();
@@ -128,7 +137,7 @@ function btnSaveOnClick(e) {
         employee.PositionId = $('#inputPositionName').attr('value');
         employee.DepartmentId = $('#inputDepartmentName').attr('value');
         employee.PersonalTaxCode = $('#inputPersonalTaxCode').val();
-        employee.Salary = $('#inputSalary').val().replaceAll('.','');
+        employee.Salary = $('#inputSalary').val().replaceAll('.', '');
         employee.JoinDate = $('#inputJoinDate').val();
         employee.WorkStatus = $('#inputWorkStatus').attr('value');
 
@@ -141,22 +150,20 @@ function btnSaveOnClick(e) {
             dataType: 'json',
             contentType: 'application/json'
         }).done(res => {
+            $('.dialog').css("visibility", "hidden");
+            loadData();
             if (flagAdd == 1) {
-                alert('Thêm mới thành công!');
+                showMes('success', 'Thêm mới bản ghi thành công!');
             } else {
-                alert('Cập nhật thông tin thành công!');
+                showMes('success', 'Cập nhật bản ghi thành công!');
             }
         }).fail(res => {
-            alert("Đã có lỗi xảy ra!");
+            showMes('danger', 'Đã có lỗi xảy ra!');
         });
-
-        // Ẩn dialog đi và load lại dữ liệu
-        setTimeout(loadData, 2000);
-        $('.dialog').css("visibility", "hidden");
+        
     } else {
-        alert("Vui lòng kiểm tra lại email và lương!");
+        showMes('danger', "Bạn chưa nhập đủ các trường bắt buộc!");
     }
-
 }
 
 
@@ -166,26 +173,20 @@ function btnSaveOnClick(e) {
 function btnDeleteOnClick() {
     var employees = EmployeeJS.checkedEmployees;
     var resSuccess = 0;
-    if (employees.length == 0) {
-        alert("Bạn chưa chọn bản ghi nào cả!");
-    } else {
-        $.each(employees, function (index, item) {
-            $.ajax({
-                url: "http://cukcuk.manhnv.net/v1/Employees/" + item,
-                method: 'DELETE'
-            }).done(res => {
-                resSuccess++;
-                EmployeeJS.checkedEmployees = EmployeeJS.checkedEmployees.filter(e => e !== item);
-            }).fail(res => {
-                console.log(res);
-            })
-        })
-        setTimeout(() => {
+    $.each(employees, function (index, item) {
+        $.ajax({
+            url: "http://cukcuk.manhnv.net/v1/Employees/" + item,
+            method: 'DELETE'
+        }).done(res => {
+            resSuccess++;
+            EmployeeJS.checkedEmployees = EmployeeJS.checkedEmployees.filter(e => e !== item);
             loadData();
-            alert("Đã xóa thành công" + resSuccess + "/" + (employees.length) + "bản ghi được chọn!");
+            showMes('success', "Đã xóa thành công " + resSuccess + "/" + (employees.length) + " bản ghi!")
             $('#btnDelete').css('visibility', 'hidden');
-        }, 1000)
-    }
+        }).fail(res => {
+            console.log(res);
+        })
+    })
 }
 
 function btnCancelOnClick(e) {
@@ -296,6 +297,7 @@ function requiredNote() {
         // chuyển border thành màu đỏ cảnh báo và khi hover hiện thông tin cảnh báo
         $(this).addClass('border-red');
         $(this).attr('title', 'Thông tin này bắt buộc nhập!');
+        showMes('danger', 'Thông tin này bắt buộc nhập!');
     } else {
         $(this).removeClass('border-red');
         $(this).removeAttr('title');
@@ -308,8 +310,13 @@ function requiredNote() {
  * */
 function checkEmail() {
     var email = $(this).val()
-    if (!validateEmail(email)) {
+    if (email == '') {
+        showMes('danger', 'Thông tin này bắt buộc nhập!');
+        $(this).addClass('border-red');
+        $(this).attr('title', 'Thông tin này bắt buộc nhập!');
+    } else if (!validateEmail(email)) {
         // chuyển border thành màu đỏ cảnh báo và khi hover hiện thông tin cảnh báo
+        showMes('warning', 'Email không đúng định dạng!');
         $(this).addClass('border-red');
         $(this).attr('title', 'Email không đúng đinh dạng!');
     } else {
@@ -318,12 +325,18 @@ function checkEmail() {
     }
 }
 
+
+/**
+ * warning if invalid salary
+ * Author hieunv (21/07/2021)
+ * */
 function checkSalary() {
     var salary = $(this).val()
-    if (!$.isNumeric( salary.replaceAll('.',''))) {
+    if (!$.isNumeric(salary.replaceAll('.', ''))) {
         // chuyển border thành màu đỏ cảnh báo và khi hover hiện thông tin cảnh báo
         $(this).addClass('border-red');
         $(this).attr('title', 'Salary không đúng đinh dạng!');
+        showMes('warning', 'Salary không đúng đinh dạng!');
     } else {
         $(this).removeClass('border-red');
         $(this).removeAttr('title');
@@ -338,46 +351,13 @@ function loadData() {
     $('.grid table tbody').empty();
     try {
         this.dataUrl = "http://cukcuk.manhnv.net/v1/Employees";
-        // lấy thông tin các cột dữ liệu
-        var cols = $('.grid table thead th');
 
         //Lấy thông tin tương ứng với các cột để map vào
         $.ajax({
             url: this.dataUrl,
             method: 'GET'
         }).done(function (res) {
-            $.each(res, function (index, obj) {
-                var tr = $(`<tr></tr>`);
-                $.each(cols, function (index, th) {
-                    var td = $(`<td></td>`);
-                    var fieldName = $(th).attr('fieldName');
-                    if (fieldName == 'WorkStatus') {
-                        var value = (obj[fieldName] == 1) ? "Đang làm việc" : "Đã nghỉ việc";
-                    } else if (fieldName == 'check') {
-                        var value = $(`<input onclick="checkcheck($(this))" type="checkbox" style="width:46px; height:24px;"/>`);
-                    } else {
-                        var value = obj[fieldName];
-                    }
-                    var formatType = $(th).attr('formatType');
-                    switch (formatType) {
-                        case 'ddmmyyyy':
-                            value = formatDate(value);
-                            break;
-                        case 'money':
-                            value = formatSalary(value);
-                            break;
-                        default:
-                            break;
-                    }
-
-                    $(td).append(value);
-                    $(tr).append(td);
-                })
-                tr.attr('bgindex', index);
-                tr.attr('idobj', obj.EmployeeId);
-
-                $('.grid table tbody').append(tr);
-            })
+            bindingData(res);
         }).fail(function (res) {
 
         });
@@ -386,26 +366,88 @@ function loadData() {
     }
 }
 
+
+/**
+ * Binding data to table
+ * @param {any} objs
+ */
+function bindingData(objs) {
+    // lấy thông tin các cột dữ liệu
+    var cols = $('.grid table thead th');
+    $.each(objs, function (index, obj) {
+        var tr = $(`<tr></tr>`);
+        $.each(cols, function (index, th) {
+            var td = $(`<td></td>`);
+            var fieldName = $(th).attr('fieldName');
+            if (fieldName == 'WorkStatus') {
+                var value = (obj[fieldName] == 1) ? "Đang làm việc" : "Đã nghỉ việc";
+            } else if (fieldName == 'check') {
+                var value = $(`<input onclick="checkcheck($(this))" type="checkbox" style="width:46px; height:24px;"/>`);
+            } else {
+                var value = obj[fieldName];
+            }
+            var formatType = $(th).attr('formatType');
+            switch (formatType) {
+                case 'ddmmyyyy':
+                    value = formatDate(value);
+                    break;
+                case 'money':
+                    value = formatSalary(value);
+                    break;
+                default:
+                    break;
+            }
+
+            $(td).append(value);
+            $(tr).append(td);
+        })
+        tr.attr('bgindex', index);
+        tr.attr('idobj', obj.EmployeeId);
+
+        $('.grid table tbody').append(tr);
+    });
+}
+
 /**
  * Load dữ liệu lên dropdown có tên trường tương ứng với fieldName
  * Auto select item đầu tiên trong sanh sách item
  * @param {any} fieldName
  */
-function loadDropdownData(fieldName) {
+function loadDropdownData(fieldName,isFilter) {
     var myUrl = '';
     if (fieldName == "Department") myUrl = "http://cukcuk.manhnv.net/api/Department";
     else if (fieldName == "Position") myUrl = "http://cukcuk.manhnv.net/v1/Positions";
+    if (isFilter == 1) fieldName += '1';
     $.ajax({
         url: myUrl,
         method: 'GET'
     }).done(res => {
         $(`#input${fieldName}Name .dropdown-data`).empty();
         $(`#input${fieldName}Name .dropdown-main p`).empty();
-        $(`#input${fieldName}Name .dropdown-main p`).append(res[0][`${fieldName}Name`]);
-        $(`#input${fieldName}Name`).attr("value", `${res[0][`${fieldName}Id`]}`);
+        if (isFilter == 1) {
+            var name = (fieldName == "Position1") ? "Tất cả vị trí" : "Tất cả phòng ban";
+            $(`#input${fieldName}Name`).attr("value", '');
+            let dropdownItemHTML = $(`<div valueid="" valuename="${name}" class="dropdown-item item-selected">
+                                            <i class="fas fa-check"></i>
+                                            <p>${name}</p>
+                                        </div>`);
+            $(`#input${fieldName}Name .dropdown-data`).append(dropdownItemHTML);
+            $(`#input${fieldName}Name .dropdown-main p`).append(name);
+            $(`#input${fieldName}Name`).attr("value", '');
+        } else {
+            $(`#input${fieldName}Name .dropdown-main p`).append(res[0][`${fieldName}Name`]);
+            $(`#input${fieldName}Name`).attr("value", `${res[0][`${fieldName}Id`]}`);
+        }
         $.each(res, function (idex, item) {
-            const name = item[`${fieldName}Name`];
-            const id = item[`${fieldName}Id`];
+            var id = '';
+            var name = '';
+            if (isFilter == 1) {
+                name = (fieldName == "Position1") ? item[`PositionName`] : item[`DepartmentName`];
+                id = (fieldName == "Position1") ? item[`PositionId`] : item[`DepartmentId`];
+            } else {
+                name = item[`${fieldName}Name`];
+                id = item[`${fieldName}Id`];
+            }
             let dropdownItemHTML = $(`<div valueid="${id}" valuename="${name}" class="dropdown-item">
                                             <i class="fas fa-check"></i>
                                             <p>${name}</p>
@@ -414,7 +456,7 @@ function loadDropdownData(fieldName) {
             if (id == $(`#input${fieldName}Name`).attr('value')) {
                 dropdownItemHTML.addClass('item-selected');
             }
-        })
+        });
     })
 }
 
@@ -429,4 +471,91 @@ function matchItemDropdown(fieldName, value) {
             $(`#input${fieldName} .dropdown-main p`).append($(item).attr('valuename'));
         }
     });
+}
+
+
+/**
+ * Show toast-messenger  
+ * @param {any} type
+ * @param {any} mes
+ */
+function showMes(type, mes) {
+    $('.toast-messenger>i').removeClass($('.toast-messenger').attr('classi'));
+    var classI
+    $('.toast-messenger p').empty();
+    $('.toast-messenger p').append(mes);
+    switch (type) {
+        case 'warning':
+            classI = 'fa-exclamation-circle';
+            $('.toast-messenger i').css('color', '#F1C04E');
+            break;
+        case 'danger':
+            classI = 'fa-exclamation-triangle';
+            $('.toast-messenger i').css('color', '#EB5757');
+            break;
+        case 'success':
+            classI = 'fa-check-circle';
+            $('.toast-messenger i').css('color', '#01B075');
+            break;
+        case 'primary':
+            classI = 'fa-exclamation';
+            $('.toast-messenger i').css('color', '#4388D9');
+            break;
+    }
+    $('.toast-messenger>i').addClass(classI);
+    $('.toast-messenger').attr('classi', classI);
+    $('.toast-messenger').addClass('scale1');
+    $('.toast-messenger').attr('scale', 1);
+    setTimeout(() => {
+        if ($('.toast-messenger').attr('scale') == 1) {
+            $('.toast-messenger').removeClass('scale1');
+            $('.toast-messenger').attr('scale', 0);
+        }
+    }, 3000);
+}
+
+/**
+ * lọc nhân viên theo phòng ban
+ * */
+function filterByDepartment() {
+    console.log(2);
+    if ($('#inputDepartment1Name').attr('value') == '') {
+        loadData();
+    } else {
+        $('.grid table tbody').empty();
+        var id = $('#inputDepartment1Name').attr('value');
+        $.ajax({
+            url: "http://cukcuk.manhnv.net/v1/Employees/employeeFilter?pageSize=100&pageNumber=1&employeeFilter=nv&departmentId=" + id ,
+            method:'GET'
+        }).done(function (res) {
+            console.log(res);
+            bindingData(res['Data']);
+        }).fail(res => {
+            showMes('warning', 'Lỗi rồi!');
+            loadData();
+        })
+    }
+}
+
+/**
+ * lọc nhân viên theo phòng ban
+ * */
+function filterByPosition() {
+    console.log(2);
+    if ($('#inputPosition1Name').attr('value') == '') {
+        loadData();
+    } else {
+        $('.grid table tbody').empty();
+        var id = $('#inputPosition1Name').attr('value');
+        $.ajax({
+            url: "http://cukcuk.manhnv.net/v1/Employees/employeeFilter?pageSize=100&pageNumber=1&employeeFilter=nv&positionId=" + id,
+            method: 'GET'
+        }).done(function (res) {
+            console.log(res);
+            bindingData(res['Data']);
+        }).fail(res => {
+            showMes('warning', 'Lỗi rồi!');
+            loadData();
+        })
+    }
 }
