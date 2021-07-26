@@ -73,6 +73,10 @@ class EmployeeJS extends BaseJS {
         //12.Format Salary when inputSalary keydown
         $('input#inputSalary').keyup(inputSalaryOnKeyup);
 
+        //13.Click vào nút exit trên popup
+        $('.popup button.btn-exit').click(() => {
+            $('.popup').css('display', 'none');
+        })
     }
 }
 
@@ -117,50 +121,57 @@ function btnSaveOnClick(e) {
         myUrl = "http://cukcuk.manhnv.net/v1/Employees/" + myEmployeeId;
         method = 'PUT';
     }
-
     var employeeCode = $('#inputEmployeeCode').val();
     var fullName = $('#inputFullName').val();
     var identityNumber = $('#inputIdentityNumber').val();
     var email = $('#inputEmail').val();
     var phoneNumber = $('#inputPhoneNumber').val();
     if (!(employeeCode == '' || fullName == '' || identityNumber == '' || email == '' || phoneNumber == '')) {
-        var employee = {};
-        employee.EmployeeCode = $('#inputEmployeeCode').val();
-        employee.FullName = $('#inputFullName').val();
-        employee.DateOfBirth = $('#inputDateOfBirth').val();
-        employee.Gender = $('#inputGenderName').attr('value');
-        employee.IdentityNumber = $('#inputIdentityNumber').val();
-        employee.IdentityDate = $('#inputIdentityDate').val();
-        employee.IdentityPlace = $('#inputIdentityPlace').val();
-        employee.Email = $('#inputEmail').val();
-        employee.PhoneNumber = $('#inputPhoneNumber').val();
-        employee.PositionId = $('#inputPositionName').attr('value');
-        employee.DepartmentId = $('#inputDepartmentName').attr('value');
-        employee.PersonalTaxCode = $('#inputPersonalTaxCode').val();
-        employee.Salary = $('#inputSalary').val().replaceAll('.', '');
-        employee.JoinDate = $('#inputJoinDate').val();
-        employee.WorkStatus = $('#inputWorkStatus').attr('value');
-
-
-        // gọi ajax post dữ liệu
-        $.ajax({
-            url: myUrl,
-            method: method,
-            data: JSON.stringify(employee),
-            dataType: 'json',
-            contentType: 'application/json'
-        }).done(res => {
-            $('.dialog').css("visibility", "hidden");
-            loadData();
-            if (flagAdd == 1) {
-                showMes('success', 'Thêm mới bản ghi thành công!');
-            } else {
-                showMes('success', 'Cập nhật bản ghi thành công!');
-            }
-        }).fail(res => {
-            showMes('danger', 'Đã có lỗi xảy ra!');
-        });
-        
+        var mes = 'Bạn có chắc chắn muốn câp nhật bản ghi này?';
+        var title = 'Chỉnh sửa bản ghi!';
+        if (flagAdd == 1) {
+            mes = 'Bạn có chắc chắn muốn thêm bản ghi này?';
+            title = 'Thêm mới bản ghi!';
+        }
+        showPopup('warning', mes, title);
+        $('.popup').css('display', 'block');
+        $('.popup button.btn-x').click(() => {
+            var employee = {};
+            employee.EmployeeCode = $('#inputEmployeeCode').val();
+            employee.FullName = $('#inputFullName').val();
+            employee.DateOfBirth = $('#inputDateOfBirth').val();
+            employee.Gender = $('#inputGenderName').attr('value');
+            employee.IdentityNumber = $('#inputIdentityNumber').val();
+            employee.IdentityDate = $('#inputIdentityDate').val();
+            employee.IdentityPlace = $('#inputIdentityPlace').val();
+            employee.Email = $('#inputEmail').val();
+            employee.PhoneNumber = $('#inputPhoneNumber').val();
+            employee.PositionId = $('#inputPositionName').attr('value');
+            employee.DepartmentId = $('#inputDepartmentName').attr('value');
+            employee.PersonalTaxCode = $('#inputPersonalTaxCode').val();
+            employee.Salary = $('#inputSalary').val().replaceAll('.', '');
+            employee.JoinDate = $('#inputJoinDate').val();
+            employee.WorkStatus = $('#inputWorkStatus').attr('value');
+            // gọi ajax post dữ liệu
+            $.ajax({
+                url: myUrl,
+                method: method,
+                data: JSON.stringify(employee),
+                dataType: 'json',
+                contentType: 'application/json'
+            }).done(res => {
+                $('.dialog').css("visibility", "hidden");
+                loadData();
+                if (flagAdd == 1) {
+                    showMes('success', 'Thêm mới bản ghi thành công!');
+                } else {
+                    showMes('success', 'Cập nhật bản ghi thành công!');
+                }
+                $('.popup').css('display', 'none');
+            }).fail(res => {
+                showMes('danger', 'Đã có lỗi xảy ra!');
+            });
+        })
     } else {
         showMes('danger', "Bạn chưa nhập đủ các trường bắt buộc!");
     }
@@ -172,20 +183,29 @@ function btnSaveOnClick(e) {
  * */
 function btnDeleteOnClick() {
     var employees = EmployeeJS.checkedEmployees;
-    var resSuccess = 0;
-    $.each(employees, function (index, item) {
-        $.ajax({
-            url: "http://cukcuk.manhnv.net/v1/Employees/" + item,
-            method: 'DELETE'
-        }).done(res => {
-            resSuccess++;
-            EmployeeJS.checkedEmployees = EmployeeJS.checkedEmployees.filter(e => e !== item);
-            loadData();
-            showMes('success', "Đã xóa thành công " + resSuccess + "/" + (employees.length) + " bản ghi!")
-            $('#btnDelete').css('visibility', 'hidden');
-        }).fail(res => {
-            console.log(res);
+    var delSuccess = 0;
+    $('.popup').css('display','block');
+    showPopup('danger', 'Bạn có chắc chắn muốn xóa các bản ghi được chọn?', "Xóa các bản ghi!");
+    $('.popup button.btn-z').click(() => {
+        $.each(employees, function (index, item) {
+            $.ajax({
+                url: "http://cukcuk.manhnv.net/v1/Employees/" + item,
+                method: 'DELETE'
+            }).done(res => {
+                delSuccess++;
+                EmployeeJS.checkedEmployees = EmployeeJS.checkedEmployees.filter(e => e !== item);
+                loadData();
+                showMes('success', "Đã xóa thành công " + delSuccess + "/" + (employees.length) + " bản ghi!")
+                $('#btnDelete').css('visibility', 'hidden');
+                $('.popup').css('display', 'none');
+            }).fail(res => {
+                console.log(res);
+                $('.popup').css('display', 'none');
+            })
         })
+    })
+    $('.popup button.btn-y').click(() => {
+        $('.popup').css('display', 'none');
     })
 }
 
@@ -194,6 +214,7 @@ function btnCancelOnClick(e) {
 }
 
 function btnRefreshOnClick(e) {
+    EmployeeJS.checkedEmployees = [];
     loadData();
 }
 
@@ -515,17 +536,60 @@ function showMes(type, mes) {
 }
 
 /**
+ * Hiển thị popup theo type được chọn
+ * @param {any} type
+ * @param {any} mes
+ * @param {any} title
+ */
+function showPopup(type, mes, title) {
+    $('.popup .popup-content .popup-content-right p').empty();
+    $('.popup .popup-content .popup-content-right p').append(mes);
+    $('.popup .popup-header p').empty();
+    $('.popup .popup-header p').append(title);
+    switch (type) {
+        case 'notification':
+            $('.popup .popup-content .popup-content-left').css('display', 'none');
+            $('.popup .popup-content .popup-content-right').css('width', '423px');
+            $('.popup .popup-content .popup-content-right').css('padding-left', '24px');
+            $('.popup .popup-footer .btn-y').css('visibility', 'hidden');
+            $('.popup .popup-footer .btn-z').css('display', 'none');
+            $('.popup .popup-footer .btn-x').css('display', 'block');
+            break;
+        case 'warning':
+            $('.popup .popup-content .popup-content-left').css('display', 'flex');
+            $('.popup .popup-content .popup-content-right').css('width', '370px');
+            $('.popup .popup-content .popup-content-right').css('padding-left', '10px');
+            $('.popup .popup-footer .btn-y').css('visibility', 'visible');
+            $('.popup .popup-footer .btn-z').css('display', 'none');
+            $('.popup .popup-footer .btn-x').css('display', 'block');
+            $('.popup .popup-content .popup-content-left i').css('color', '#F1C04E');
+            break;
+        case 'danger':
+            $('.popup .popup-content .popup-content-left').css('display', 'flex');
+            $('.popup .popup-content .popup-content-right').css('width', '370px');
+            $('.popup .popup-content .popup-content-right').css('padding-left', '10px');
+            $('.popup .popup-footer .btn-y').css('visibility', 'visible');
+            $('.popup .popup-footer .btn-z').css('display', 'block');
+            $('.popup .popup-footer .btn-x').css('display', 'none');
+            $('.popup .popup-content .popup-content-left i').css('color', '#EA2B2B');
+            break;
+        default:
+            break;
+    }
+}
+
+/**
  * lọc nhân viên theo phòng ban
  * */
 function filterByDepartment() {
-    console.log(2);
     if ($('#inputDepartment1Name').attr('value') == '') {
         loadData();
     } else {
         $('.grid table tbody').empty();
         var id = $('#inputDepartment1Name').attr('value');
+        console.log(id);
         $.ajax({
-            url: "http://cukcuk.manhnv.net/v1/Employees/employeeFilter?pageSize=100&pageNumber=1&employeeFilter=nv&departmentId=" + id ,
+            url: "http://cukcuk.manhnv.net/v1/Employees/employeeFilter?pageSize=20&pageNumber=1&employeeFilter=nv&departmentId=" + id ,
             method:'GET'
         }).done(function (res) {
             console.log(res);
@@ -538,17 +602,16 @@ function filterByDepartment() {
 }
 
 /**
- * lọc nhân viên theo phòng ban
+ * lọc nhân viên theo vị trí
  * */
 function filterByPosition() {
-    console.log(2);
     if ($('#inputPosition1Name').attr('value') == '') {
         loadData();
     } else {
         $('.grid table tbody').empty();
         var id = $('#inputPosition1Name').attr('value');
         $.ajax({
-            url: "http://cukcuk.manhnv.net/v1/Employees/employeeFilter?pageSize=100&pageNumber=1&employeeFilter=nv&positionId=" + id,
+            url: "http://cukcuk.manhnv.net/v1/Employees/employeeFilter?pageSize=20&pageNumber=1&employeeFilter=nv&positionId=" + id,
             method: 'GET'
         }).done(function (res) {
             console.log(res);
