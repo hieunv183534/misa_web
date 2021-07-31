@@ -1,18 +1,26 @@
 <template>
   <div class="content">
       <ContentHeader/>
-      <ContentBody/>
+      <EmployeeList
+      @btnAddOnClick = "$emit('showAddForm')"
+      @chooseAnEmployee = "chooseAnEmployee1"
+      />
   </div>
 </template>
 
 <script>
 import ContentHeader from "./TheContentHeader.vue"
-import ContentBody from "./TheContentBody.vue"
+import EmployeeList from "../../view/employee/EmployeeList.vue"
 
 export default {
     name: 'TheContent',
     components:{
-        ContentHeader,ContentBody
+        ContentHeader,EmployeeList
+    },
+    methods:{
+        chooseAnEmployee1(employeeId){
+            this.$emit('showEditForm',employeeId)
+        }
     }
 };
 </script>

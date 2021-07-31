@@ -1,5 +1,5 @@
 <template>
-  <button v-bind:class="buttonClass" v-bind:id="buttonId">
+  <button v-bind:class="buttonClass" v-bind:id="buttonId" @click="$emit('btn-click')">
       <i v-bind:class="['fas' , iClass]"></i>
       <p>{{buttonText}}</p>
   </button>

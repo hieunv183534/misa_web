@@ -3,6 +3,9 @@
     v-bind:class="inputClass"
     v-bind:type="inputType"
     v-bind:placeholder="inputPlacehoder"
+    v-bind:value="inputValue"
+    v-bind:id="inputId"
+    @change ="$emit('input', $event.target.value)"
   />
 </template>
 
@@ -13,6 +16,8 @@ export default {
     inputClass: String,
     inputType: String,
     inputPlacehoder: String,
+    inputValue: String,
+    inputId: String
   },
 };
 </script>
