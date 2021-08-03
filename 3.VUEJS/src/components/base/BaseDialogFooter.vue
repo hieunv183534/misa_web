@@ -4,7 +4,6 @@
     buttonId="btnCancel"
     buttonClass="btn-cancel"
     buttonText="Hủy"
-    iClass=""
     @btn-click="$emit('btnCancelOnClick')"
     />
     <Button
@@ -52,6 +51,6 @@ export default {
 }
 
 .employee-profile-dialog .dialog-footer .btn-cancel i{
-    display: none;
+    display: none !important;
 }
 </style>

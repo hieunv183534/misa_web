@@ -4,11 +4,12 @@
       <b>Danh sách nhân viên</b>
       <span>
         <Button
+          v-if="isShowDeleteBtn"
           buttonId="btnDelete"
           buttonClass="button button-icon"
           iClass="fa-trash-alt"
           buttonText="Xóa nhân viên"
-          @btn-click ="btnDeleteOnClick"
+          @btn-click="btnDeleteOnClick"
         />
         <Button
           buttonId="BtnAdd"
@@ -29,14 +30,18 @@
         <Dropdown
           dropdownId="inputPosition1Name"
           dropdownClass=""
-          dropdownValue="Đông"
-          dropdownText="Tất cả vị trí"
+          :dropdownValue="dropdownPositionObj.id"
+          :dropdownText="dropdownPositionObj.name"
+          dropdownTitle="Positions1"
+          @dropdownOnSelect="dropdownPositionOnSelect"
         />
         <Dropdown
           dropdownId="inputDepartment1Name"
           dropdownClass=""
-          dropdownValue="Đông"
-          dropdownText="Tất cả phòng ban"
+          :dropdownValue="dropdownDepartmentObj.id"
+          :dropdownText="dropdownDepartmentObj.name"
+          dropdownTitle="Departments1"
+          @dropdownOnSelect="dropdownDepartmentOnSelect"
         />
       </div>
       <div class="toolbar-right">
@@ -49,16 +54,17 @@
         />
       </div>
     </div>
-    <Grid 
-    @tableRowOnDbClick = "tableRowOnDbClick1"
-    :isLoadAgain="loadAgain"
+    <Grid
+      @tableRowOnDbClick="tableRowOnDbClick1"
+      :isLoadAgain="loadAgain"
+      @showDeleteBtn="showDeleteBtn"
+      @hideDeleteBtn="hideDeleteBtn"
     />
     <ContentPaging />
   </div>
 </template>
 
 <script>
-import { eventBus1 } from "../../main.js"
 import Button from "../../components/base/BaseButton.vue";
 import Input from "../../components/base/BaseInput.vue";
 import Dropdown from "../../components/base/BaseDropdown.vue";
@@ -74,26 +80,40 @@ export default {
     Grid,
     ContentPaging,
   },
-  data(){
-      return{
-          loadAgain : false
-      }
+  data() {
+    return {
+      loadAgain: false,
+      dropdownPositionObj: {},
+      dropdownDepartmentObj: {},
+      isShowDeleteBtn: false,
+    };
   },
-  methods:{
-      btnAddOnClick(){
-          this.$emit('btnAddOnClick');
-      },
-      tableRowOnDbClick1(employeeId){
-          this.$emit('chooseAnEmployee',employeeId)
-      },
-      reloadData(){
-          this.loadAgain = !this.loadAgain
-      },
-      btnDeleteOnClick(){
-        eventBus1.$emit("deleteData");
-      }
+  methods: {
+    btnAddOnClick() {
+      this.$emit("btnAddOnClick");
+    },
+    tableRowOnDbClick1(employeeId) {
+      this.$emit("chooseAnEmployee", employeeId);
+    },
+    reloadData() {
+      this.loadAgain = !this.loadAgain;
+    },
+    btnDeleteOnClick() {
+      this.$emit("btnDeleteOnClick");
+    },
+    dropdownPositionOnSelect(obj) {
+      this.dropdownPositionObj = obj;
+    },
+    dropdownDepartmentOnSelect(obj) {
+      this.dropdownDepartmentObj = obj;
+    },
+    showDeleteBtn(){
+      this.isShowDeleteBtn = true;
+    },
+    hideDeleteBtn(){
+      this.isShowDeleteBtn = false;
+    }
   },
-
 };
 </script>
 

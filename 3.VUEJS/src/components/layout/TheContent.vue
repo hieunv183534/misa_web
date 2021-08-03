@@ -1,9 +1,10 @@
 <template>
-  <div class="content">
+  <div class="content" :class="{'collapse-content' : isCollapseMenu}">
       <ContentHeader/>
       <EmployeeList
       @btnAddOnClick = "$emit('showAddForm')"
       @chooseAnEmployee = "chooseAnEmployee1"
+      @btnDeleteOnClick ="$emit('showDeletePopup')"
       />
   </div>
 </template>
@@ -21,6 +22,9 @@ export default {
         chooseAnEmployee1(employeeId){
             this.$emit('showEditForm',employeeId)
         }
+    },
+    props:{
+        isCollapseMenu: Boolean
     }
 };
 </script>
@@ -31,5 +35,9 @@ export default {
     height: 100vh;
     float: left;
     transition: 0.5s;
+}
+
+.collapse-content{
+    width: calc(100% - 54px);
 }
 </style>

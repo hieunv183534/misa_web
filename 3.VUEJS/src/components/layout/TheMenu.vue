@@ -1,33 +1,39 @@
 <template>
-    <div class="menu">
+    <div class="menu" :class="{'collapse-menu': isCollapseMenu}">
         <div class="menu-header">
-            <div class="toggle"></div>
-            <div class="logo"></div>
+            <button class="toggle" @click="$emit('btnToggleOnClick')"></button>
+            <div v-if="!isCollapse" class="logo"></div>
         </div>
         <div class="menu-body">
             <MenuItem
             menuItemClass="dashboard-icon"
             menuItemText="Tổng quan"
+            :isShowText="!isCollapse"
             />
             <MenuItem
             menuItemClass="document-online-icon"
             menuItemText="Hồ sơ online"
+            :isShowText="!isCollapse"
             />
             <MenuItem
             menuItemClass="report-icon"
             menuItemText="Theo dõi chi"
+            :isShowText="!isCollapse"
             />
             <MenuItem
             menuItemClass="dashboard-icon"
             menuItemText="Danh mục khách hàng"
+            :isShowText="!isCollapse"
             />
             <MenuItem
             menuItemClass="dic-employee-icon"
             menuItemText="Danh mục nhân viên"
+            :isShowText="!isCollapse"
             />
             <MenuItem
             menuItemClass="setting-icon"
             menuItemText="Thiết lập"
+            :isShowText="!isCollapse"
             />
         </div>
     </div>
@@ -40,6 +46,25 @@ export default {
     name: 'TheMenu',
     components:{
         MenuItem
+    },
+    props:{
+        isCollapseMenu: Boolean,
+    },
+    data(){
+        return{
+            isCollapse: false
+        }
+    },
+    watch:{
+        isCollapseMenu(){
+            if(this.isCollapseMenu == true){
+                this.isCollapse = this.isCollapseMenu;
+            }else{
+                setTimeout(()=>{
+                    this.isCollapse = this.isCollapseMenu;
+                },500);
+            }
+        }
     }
 }
 </script>
@@ -53,6 +78,10 @@ export default {
     float: left;
     transition: 0.5s;
     overflow: hidden;
+}
+
+.collapse-menu{
+    width: 52px;
 }
 
     .menu .menu-header {
@@ -73,6 +102,8 @@ export default {
             background-image: url('../../assets/icon/toggle.png');
             background-repeat: no-repeat;
             background-size: contain;
+            outline: none;
+            border: none;
         }
 
         .menu .menu-header .logo {

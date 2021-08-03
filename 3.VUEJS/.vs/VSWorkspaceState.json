@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\components",
+    "\\src\\components\\base",
+    "\\src\\components\\layout",
+    "\\src\\view",
+    "\\src\\view\\employee"
+  ],
+  "SelectedNode": "\\src\\view\\employee\\EmployeeDialog.vue",
+  "PreviewInSolutionExplorer": false
+}

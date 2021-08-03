@@ -1,22 +1,28 @@
 <template>
   <div
-    v-bind:class="['dropdown-item',dropdownItemClass]"
+    v-bind:class="['dropdown-item', dropdownItemClass]"
     v-bind:valueid="dropdownItemValueId"
     v-bind:valuename="dropdownItemValueName"
+    @click="
+      $emit('itemClick', {
+        id: dropdownItemValueId,
+        name: dropdownItemValueName,
+      })
+    "
   >
     <i class="fas fa-check"></i>
-    <p>{{dropdownItemValueName}}</p>
+    <p>{{ dropdownItemValueName }}</p>
   </div>
 </template>
 
 <script>
 export default {
   name: "BaseDropdownItem",
-  props:{
+  props: {
     dropdownItemClass: String,
     dropdownItemValueId: String,
-    dropdownItemValueName: String
-  }
+    dropdownItemValueName: String,
+  },
 };
 </script>
 

@@ -4,7 +4,7 @@
     <div class="employee-profile-dialog">
       <DialogHeader
         dialogTitle="THÔNG TIN NHÂN VIÊN"
-        @btnExitOnClick="$emit('hideDialog')"
+        @btnExitOnClick="hideThisForm"
       />
       <div class="dialog-content">
         <div class="dialog-content-left">
@@ -24,6 +24,7 @@
                   :inputValue="employeeCode"
                   inputId="inputEmployeeCode"
                   v-model="employeeCode"
+                  @input-blur="validateEmployeeCode"
                 />
               </div>
               <div class="small-info">
@@ -35,6 +36,7 @@
                   :inputValue="fullName"
                   inputId="inputFullName"
                   v-model="fullName"
+                  @input-blur="validateFullName"
                 />
               </div>
             </div>
@@ -55,8 +57,10 @@
                 <Dropdown
                   dropdownClass="dropdown"
                   dropdownId="inputGenderName"
-                  dropdownText="Nam"
-                  dropdownValue="1"
+                  :dropdownText="dropdownGenderObj.name"
+                  :dropdownValue="dropdownGenderObj.id"
+                  dropdownTitle="Gender"
+                  @dropdownOnSelect="dropdownGenderOnSelect"
                 />
               </div>
             </div>
@@ -70,6 +74,7 @@
                   :inputValue="identityNumber"
                   inputId="inputIdentityNumber"
                   v-model="identityNumber"
+                  @input-blur="validateIdentityNumber"
                 />
               </div>
               <div class="small-info">
@@ -107,6 +112,7 @@
                   :inputValue="email"
                   inputId="inputEmail"
                   v-model="email"
+                  @input-blur="validateEmail"
                 />
               </div>
               <div class="small-info">
@@ -118,6 +124,7 @@
                   :inputValue="phoneNumber"
                   inputId="inputPhoneNumber"
                   v-model="phoneNumber"
+                  @input-blur="validatePhoneNumber"
                 />
               </div>
             </div>
@@ -128,19 +135,24 @@
               <div class="small-info">
                 <p>Vị trí</p>
                 <Dropdown
-                  dropdownClass="dropdown"
-                  dropdownId="inputPositionName"
-                  dropdownText="Giám đốc"
-                  dropdownValue=""
+                  dropdownId="inputPosition1Name"
+                  dropdownClass=""
+                  :dropdownValue="dropdownPositionObj.id"
+                  :dropdownText="dropdownPositionObj.name"
+                  dropdownTitle="Positions"
+                  @dropdownOnSelect="dropdownPositionOnSelect"
+                  v-model="positionId"
                 />
               </div>
               <div class="small-info">
                 <p>Phòng ban</p>
                 <Dropdown
-                  dropdownClass="dropdown"
-                  dropdownId="inputDepartmentName"
-                  dropdownText="Phòng đào tạo"
-                  dropdownValue=""
+                  dropdownId="inputPosition1Name"
+                  dropdownClass=""
+                  :dropdownValue="dropdownDepartmentObj.id"
+                  :dropdownText="dropdownDepartmentObj.name"
+                  dropdownTitle="Departments"
+                  @dropdownOnSelect="dropdownDepartmentOnSelect"
                 />
               </div>
             </div>
@@ -185,8 +197,10 @@
                 <Dropdown
                   dropdownClass="dropdown last-dropdown"
                   dropdownId="inputWorkStatus"
-                  dropdownText="Đang làm việc"
-                  dropdownValue="1"
+                  :dropdownText="dropdownWorkStatusObj.name"
+                  :dropdownValue="dropdownWorkStatusObj.id"
+                  dropdownTitle="WorkStatus"
+                  @dropdownOnSelect="dropdownWorkStatusOnSelect"
                 />
               </div>
             </div>
@@ -195,7 +209,7 @@
       </div>
 
       <DialogFooter
-        @btnCancelOnClick="$emit('hideDialog1')"
+        @btnCancelOnClick="hideThisForm"
         @btnSaveOnClick="saveEmployee"
       />
     </div>
@@ -210,6 +224,7 @@ import DialogTitleInfo from "../../components/base/BaseDialogTitleInfo.vue";
 import Input from "../../components/base/BaseInput.vue";
 import Dropdown from "../../components/base/BaseDropdown.vue";
 import { eventBus } from "../../main.js";
+import { eventBus1 } from "../../main.js";
 
 export default {
   name: "EmployeeDialog",
@@ -240,6 +255,7 @@ export default {
   },
   data() {
     return {
+      employee: {},
       employeeCode: "",
       fullName: "",
       gender: "",
@@ -255,47 +271,85 @@ export default {
       personalTaxCode: "",
       salary: "",
       workStatus: "",
+      dropdownGenderObj: {},
+      dropdownPositionObj: {},
+      dropdownDepartmentObj: {},
+      dropdownWorkStatusObj: {},
     };
   },
-  methods: {
-    saveEmployee() {
-      var employee = {};
-      employee.EmployeeCode = this.employeeCode;
-      employee.FullName = this.fullName;
-      employee.DateOfBirth = this.dateOfBirth;
-      employee.PhoneNumber = this.phoneNumber;
-      employee.Email = this.email;
-      employee.IdentityNumber = this.identityNumber;
-      employee.IdentityDate = this.identityDate;
-      employee.IdentityPlace = this.identityPlace;
-      employee.JoinDate = this.joinDate;
-      employee.PersonalTaxCode = this.personalTaxCode;
-      employee.Salary = this.salary;
-
-      //   var vm = this;
+  created() {
+    eventBus1.$on("addOrUpdateData", () => {
       if (this.mode == 1) {
-        axios
-          .post("http://cukcuk.manhnv.net/v1/Employees", employee)
-          .then(() => {
-            alert("Thêm nhân viên thành công!");
-            eventBus.$emit("loadData");
-          })
-          .catch((res) => {
-            console.log(res);
-          });
+        alert("bắt đầu thêm")
+        this.addData();
       } else {
-        axios
-          .put(
-            "http://cukcuk.manhnv.net/v1/Employees/" + this.myEmployeeId,
-            employee
-          )
-          .then(() => {
-            alert("Sửa nhân viên thành công!");
-            eventBus.$emit("loadData");
-          })
-          .catch((res) => {
-            console.log(res);
-          });
+        alert("bắt đầu sửa")
+        this.updateData();
+      }
+    });
+  },
+  methods: {
+    hideThisForm() {
+      this.$emit("hideDialog");
+    },
+    addData() {
+      var vm = this;
+      axios
+        .post("http://cukcuk.manhnv.net/v1/Employees", vm.employee)
+        .then(() => {
+          eventBus.$emit("showTooltipAddSuccess");
+          eventBus.$emit("loadData");
+        })
+        .catch((res) => {
+          console.log(res);
+        });
+    },
+    updateData() {
+      var vm = this;
+      axios
+        .put(
+          "http://cukcuk.manhnv.net/v1/Employees/" + vm.myEmployeeId,
+          vm.employee
+        )
+        .then(() => {
+          eventBus.$emit("showTooltipUpdateSuccess");
+          eventBus.$emit("loadData");
+        })
+        .catch((res) => {
+          console.log(res);
+        });
+    },
+    saveEmployee() {
+      this.employee.EmployeeCode = this.employeeCode;
+      this.employee.FullName = this.fullName;
+      this.employee.DateOfBirth = this.dateOfBirth;
+      this.employee.PhoneNumber = this.phoneNumber;
+      this.employee.Email = this.email;
+      this.employee.IdentityNumber = this.identityNumber;
+      this.employee.IdentityDate = this.identityDate;
+      this.employee.IdentityPlace = this.identityPlace;
+      this.employee.JoinDate = this.joinDate;
+      this.employee.PersonalTaxCode = this.personalTaxCode;
+      this.employee.Salary = this.salary;
+      this.employee.PositionId = this.positionId;
+      this.employee.DepartmentId = this.departmentId;
+      this.employee.Gender = this.gender;
+      this.employee.WorkStatus = this.workStatus;
+
+      if (
+        this.employee.EmployeeCode !== "" &&
+        this.employee.FullName !== "" &&
+        this.employee.IdentityNumber !== "" &&
+        this.employee.Email !== "" &&
+        this.employee.PhoneNumber !== ""
+      ) {
+        if (this.mode == 1) {
+          eventBus1.$emit("showPopupConfirmAdd");
+        } else {
+          eventBus1.$emit("showPopupConfirmUpdate");
+        }
+      } else {
+        eventBus1.$emit("showTooltipInputRequiedAll");
       }
     },
     formatDateToValue(_date) {
@@ -311,12 +365,60 @@ export default {
         return "";
       }
     },
+    dropdownGenderOnSelect(obj) {
+      this.dropdownGenderObj = obj;
+      this.gender = obj.id;
+    },
+    dropdownPositionOnSelect(obj) {
+      this.dropdownPositionObj = obj;
+      this.positionId = obj.id;
+    },
+    dropdownDepartmentOnSelect(obj) {
+      this.dropdownDepartmentObj = obj;
+      this.departmentId = obj.id;
+    },
+    dropdownWorkStatusOnSelect(obj) {
+      this.dropdownWorkStatusObj = obj;
+      this.workStatus = obj.id;
+    },
+    validateEmployeeCode() {
+      if (this.employeeCode == "") {
+        eventBus1.$emit("showTooltipInputRequied");
+      }
+    },
+    validateFullName() {
+      if (this.fullName == "") {
+        eventBus1.$emit("showTooltipInputRequied");
+      }
+    },
+    validateIdentityNumber() {
+      if (this.identityNumber == "") {
+        eventBus1.$emit("showTooltipInputRequied");
+      }
+    },
+    validateEmail() {
+      if (this.email == "") {
+        eventBus1.$emit("showTooltipInputRequied");
+      }
+    },
+    validatePhoneNumber() {
+      if (this.phoneNumber == "") {
+        eventBus1.$emit("showTooltipInputRequied");
+      }
+    },
   },
   watch: {
     isReOpen() {
       if (this.mode == 1) {
+        //call api lấy dữ liệu newEmployeeCode
+        axios
+          .get("http://cukcuk.manhnv.net/v1/Employees/NewEmployeeCode")
+          .then((res) => {
+            this.employeeCode = res.data;
+          })
+          .catch(() => {});
+
         this.fullName = "";
-        this.employeeCode = "";
         this.dateOfBirth = "";
         this.phoneNumber = "";
         this.email = "";
@@ -326,6 +428,10 @@ export default {
         this.joinDate = "";
         this.personalTaxCode = "";
         this.salary = "";
+        this.dropdownPositionObj = { id: "", name: "" };
+        this.dropdownDepartmentObj = { id: "", name: "" };
+        this.dropdownGenderObj = { id: "", name: "" };
+        this.dropdownWorkStatusObj = { id: "", name: "" };
       } else {
         // lấy lên nhân viên và bind vào form
         axios
@@ -333,7 +439,7 @@ export default {
           .then((res) => {
             this.fullName = res.data.FullName;
             this.employeeCode = res.data.EmployeeCode;
-            this.dateOfBirth =this.formatDateToValue(res.data.DateOfBirth);
+            this.dateOfBirth = this.formatDateToValue(res.data.DateOfBirth);
             this.phoneNumber = res.data.PhoneNumber;
             this.email = res.data.Email;
             this.identityNumber = res.data.identityNumber;
@@ -341,7 +447,24 @@ export default {
             this.identityPlace = res.data.IdentityPlace;
             this.joinDate = this.formatDateToValue(res.data.JoinDate);
             this.personalTaxCode = res.data.PersonalTaxCode;
-            this.salary = res.data.Salary.toString();
+            this.salary = res.data.Salary + "";
+            this.dropdownGenderObj = { id: res.data.Gender + "", name: "" };
+            console.log(this.dropdownGenderObj.id);
+            this.dropdownPositionObj = {
+              id: res.data.PositionId + "",
+              name: "",
+            };
+            console.log(this.dropdownPositionObj.id);
+            this.dropdownDepartmentObj = {
+              id: res.data.DepartmentId + "",
+              name: "",
+            };
+            console.log(this.dropdownDepartmentObj.id);
+            this.dropdownWorkStatusObj = {
+              id: res.data.WorkStatus + "",
+              name: "",
+            };
+            console.log(this.dropdownWorkStatusObj.id);
           })
           .catch((res) => {
             console.log(res);
@@ -497,18 +620,4 @@ export default {
   margin-left: 10px;
   font-family: "GoogleSans-Regular";
 }
-
-/*.employee-profile-dialog .dialog-content .dialog-content-right .small-info input.calender {
-                        background-image: url('../../content/img/calender.jpg');
-                        background-repeat: no-repeat;
-                        background-size: 16px;
-                        background-position: 246px center;
-                    }
-
-                    .employee-profile-dialog .dialog-content .dialog-content-right .small-info input.down1 {
-                        background-image: url('../../content/img/down1.jpg');
-                        background-repeat: no-repeat;
-                        background-size: 16px;
-                        background-position: 264px center;
-                    }*/
 </style>

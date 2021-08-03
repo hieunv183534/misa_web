@@ -1,5 +1,5 @@
 <template>
-  <div class="grid">
+  <div class="grid" :class="{ 'table-collapse' : isCollase}">
     <table>
       <thead>
         <tr>
@@ -37,7 +37,7 @@
           <td>
             <input
               type="checkbox"
-              style="width: 46px; height: 24px"
+              style="width: 46px; height: 20px; background-color:red;"
               @click="checkcheck(employee.EmployeeId)"
             />
           </td>
@@ -68,6 +68,7 @@ export default {
     return {
       employees: [],
       checkedEmployees: [],
+      isCollase: false
     };
   },
   created() {
@@ -79,6 +80,11 @@ export default {
 
     eventBus1.$on("deleteData", () => {
       this.deleteData();
+    });
+
+     eventBus1.$on("collapseMenu", (_isCollapse) => {
+       this.isCollase = _isCollapse;
+      console.log(this.isCollase)
     });
   },
   methods: {
@@ -107,13 +113,14 @@ export default {
     checkcheck(id) {
       if (this.checkedEmployees.includes(id)) {
         this.checkedEmployees = this.checkedEmployees.filter((e) => e !== id);
+        this.$emit('hideDeleteBtn');
       } else {
         this.checkedEmployees.push(id);
+        this.$emit('showDeleteBtn');
       }
     },
     loadData() {
       var vm = this;
-      console.log(this);
       axios
         .get("http://cukcuk.manhnv.net/v1/Employees")
         .then((res) => {
@@ -132,7 +139,7 @@ export default {
             vm.checkedEmployees = vm.checkedEmployees.filter((e) => e !== item);
             if (vm.checkedEmployees.length == 0) {
               vm.loadData();
-              alert("Đã xóa hết các bản ghi được chọn!");
+              eventBus.$emit('showTooltipDeleteSuccess')
             }
           });
       });
@@ -154,10 +161,16 @@ export default {
 
 <style scoped>
 .content .content-body .grid {
-  width: calc(100vw - 274px);
+  width: calc(100vw - 275px);
   height: calc(100% - 156px);
   float: left;
   overflow: scroll;
+  transition: 0.5s;
+}
+
+.table-collapse{
+  width: calc(100vw - 102px) !important;
+  transition: 0.5s;
 }
 
 ::-webkit-scrollbar {

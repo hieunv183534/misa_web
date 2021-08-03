@@ -2,30 +2,38 @@
   <div class="popup" v-bind:type="popupType">
     <div class="popup-header">
       <p>{{ popupTitle }}</p>
-      <button class="btn-exit">
+      <button class="btn-exit" @click="hidePopup">
         <i class="fas fa-times"></i>
       </button>
     </div>
     <div class="popup-content">
-      <div class="popup-content-left">
-        <i class="fas fa-exclamation-triangle"></i>
+      <div v-if="popupType !== 'notification'" class="popup-content-left" >
+        <i v-if="popupType == 'danger'" class="fas fa-exclamation-triangle danger"></i>
+        <i v-if="popupType == 'warning'" class="fas fa-exclamation-triangle warning"></i>
       </div>
-      <div class="popup-content-right">
+      <div v-if="popupType == 'notification'" class="popup-content-right long">
+        <p>
+          {{ popupContent }}
+        </p>
+      </div>
+      <div v-else class="popup-content-right short">
         <p>
           {{ popupContent }}
         </p>
       </div>
     </div>
     <div class="popup-footer">
-      <Button buttonClass="button btn-y" buttonText="NO" />
-      <Button buttonClass="button btn-x" buttonText="YES" />
-      <Button buttonClass="button btn-z" buttonText="YES" />
+      <Button v-if="popupType !== 'notification'" buttonClass="button btn-y" buttonText="NO" @btn-click="hidePopup"/>
+      <Button v-if="popupType !== 'danger'" buttonClass="button btn-x" buttonText="YES" @btn-click="btnXOnClick" />
+      <Button v-if="popupType == 'danger'" buttonClass="button btn-z" buttonText="YES" @btn-click="btnZOnClick" />
     </div>
   </div>
 </template>
 
 <script>
 import Button from "./BaseButton.vue";
+import { eventBus1 } from "../../main.js";
+
 
 export default {
   name: "BasePopup",
@@ -37,6 +45,19 @@ export default {
   components: {
     Button,
   },
+  methods:{
+    btnZOnClick(){
+      eventBus1.$emit('deleteData');
+      this.hidePopup();
+    },
+    hidePopup(){
+      this.$emit('hidePopup1');
+    },
+    btnXOnClick(){
+      eventBus1.$emit('addOrUpdateData');
+      this.hidePopup();
+    }
+  }
 };
 </script>
 
@@ -51,10 +72,14 @@ export default {
   position: fixed;
   left: 50%;
   margin-left: -225px;
-  top: 170px;
+  top: 300px;
   z-index: 1001;
   background-color: #fff;
   display: none;
+}
+
+.popup-show{
+  display: block;
 }
 
 .popup .popup-header {
@@ -108,8 +133,12 @@ export default {
   border-radius: 50%;
 }
 
-.popup .popup-content .popup-content-left i {
-  color: #f1c04e;
+.popup .popup-content .popup-content-left i.warning {
+  color: #F1C04E;
+}
+
+.popup .popup-content .popup-content-left i.danger {
+  color: #EA2B2B;
 }
 
 .popup .popup-content .popup-content-left p {
@@ -121,6 +150,16 @@ export default {
   height: 100%;
   padding: 24px 0px 24px 10px;
   box-sizing: border-box;
+}
+
+.popup .popup-content .popup-content-right.long{
+  width: 423px;
+  padding-left: 24px;
+}
+
+.popup .popup-content .popup-content-right.short{
+  width: 370px;
+  padding-left: 10px;
 }
 
 .popup .popup-content .popup-content-right p {
@@ -154,6 +193,7 @@ export default {
   border: none;
   justify-content: center;
 }
+
 
 .popup .popup-footer .btn-y:hover {
   background-color: #e5e5e5;

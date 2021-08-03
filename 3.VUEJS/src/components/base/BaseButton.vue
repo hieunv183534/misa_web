@@ -1,6 +1,6 @@
 <template>
   <button v-bind:class="buttonClass" v-bind:id="buttonId" @click="$emit('btn-click')">
-      <i v-bind:class="['fas' , iClass]"></i>
+      <i v-if="iClass !== ''" v-bind:class="['fas' , iClass]"></i>
       <p>{{buttonText}}</p>
   </button>
 </template>
@@ -11,7 +11,10 @@ export default {
   props:{
     buttonId: String,
     buttonText : String,
-    iClass: String,
+    iClass:{
+      type: String,
+      default: ''
+    },
     buttonClass: String
   }
 };

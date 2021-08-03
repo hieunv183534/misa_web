@@ -1,14 +1,26 @@
 <template>
   <div id="app">
-    <Menu />
-    <Content @showAddForm="showAddForm" @showEditForm="showEditForm1" />
+    <Menu 
+    :isCollapseMenu="isCollapseMenu"
+    @btnToggleOnClick="btnToggleOnClick" />
+    <Content
+      @showAddForm="showAddForm"
+      @showEditForm="showEditForm1"
+      @showDeletePopup="showDeletePopup"
+      :isCollapseMenu="isCollapseMenu"
+    />
     <ToolTip
-      tooltipText="Vui lòng nhập đủ các trường!"
-      tooltipIClass="fa-exclamation-triangle"
+      :tooltipText="tooltipText"
+      :tooltipType="tooltipType"
+      :tooltipScaleClass="tooltipScaleClass"
+      @closeToolTip="closeToolTip"
     />
     <Popup
-      popupTitle="Xóa nhân viên"
-      popupContent="Bạn có muốn xóa nhân viên này không?"
+      :class="{ 'popup-show': isShowPopup }"
+      :popupTitle="popupTitle"
+      :popupContent="popupContent"
+      :popupType="popupType"
+      @hidePopup1="hidePopup"
     />
     <EmployeeDialog
       :isShow="isShowAddDialog"
@@ -16,12 +28,13 @@
       :myEmployeeId="employeeId"
       :isReOpen="reOpen"
       @hideDialog="hideForm"
-      @hideDialog1="hideForm"
     />
   </div>
 </template>
 
 <script>
+import { eventBus } from "./main.js";
+import { eventBus1 } from "./main.js";
 import Menu from "./components/layout/TheMenu.vue";
 import Content from "./components/layout/TheContent.vue";
 import ToolTip from "./components/base/BaseToolTip.vue";
@@ -37,19 +50,66 @@ export default {
     Popup,
     EmployeeDialog,
   },
+  created() {
+    eventBus.$on("showTooltipDeleteSuccess", () => {
+      this.tooltipType = "success";
+      this.tooltipText = "Đã xóa thành công !";
+      this.tooltipScaleClass = "scale1";
+    });
+    eventBus.$on("showTooltipAddSuccess", () => {
+      this.tooltipType = "success";
+      this.tooltipText = "Đã thêm mới thành công !";
+      this.tooltipScaleClass = "scale1";
+    });
+    eventBus.$on("showTooltipUpdateSuccess", () => {
+      this.tooltipType = "success";
+      this.tooltipText = "Đã cập nhật thành công !";
+      this.tooltipScaleClass = "scale1";
+    });
+    eventBus1.$on("showTooltipInputRequied", () => {
+      this.tooltipType = "danger";
+      this.tooltipText = "Thông tin này bắt buộc nhập !";
+      this.tooltipScaleClass = "scale1";
+    });
+    eventBus1.$on("showPopupConfirmAdd", () => {
+      this.isShowPopup = true;
+      this.popupContent = "Bạn có muốn thêm nhân viên này vào danh sách không?";
+      this.popupType = "warning";
+      this.popupTitle = "Thêm mới bản ghi";
+    });
+    eventBus1.$on("showPopupConfirmUpdate", () => {
+      this.isShowPopup = true;
+      this.popupContent = "Bạn có muốn cập nhật thông tin nhân viên này không?";
+      this.popupType = "warning";
+      this.popupTitle = "Cập nhật bản ghi";
+    });
+    eventBus1.$on("showTooltipInputRequiedAll", () => {
+      this.tooltipType = "danger";
+      this.tooltipText = "Chưa nhập đủ các trường bắt buộc !";
+      this.tooltipScaleClass = "scale1";
+    });
+  },
   data() {
     return {
+      isCollapseMenu: false,
       isShowAddDialog: false,
       forMode: 1,
-      employeeId :'',
-      reOpen: false
+      employeeId: "",
+      reOpen: false,
+      isShowPopup: false,
+      popupContent: "",
+      popupType: "",
+      popupTitle: "",
+      tooltipText: "",
+      tooltipType: "",
+      tooltipScaleClass: "scale0",
     };
   },
   methods: {
     showAddForm() {
       this.isShowAddDialog = true;
       this.forMode = 1;
-      this.employeeId = '';
+      this.employeeId = "";
       this.reOpen = !this.reOpen;
     },
     hideForm() {
@@ -58,8 +118,25 @@ export default {
     showEditForm1(id) {
       this.isShowAddDialog = true;
       this.forMode = 0;
-      this.employeeId = id
+      this.employeeId = id;
       this.reOpen = !this.reOpen;
+    },
+    showDeletePopup() {
+      this.isShowPopup = true;
+      this.popupContent =
+        "Bạn có muốn xóa các bản ghi này không? Bạn có muốn xóa các bản ghi này không? Bạn có muốn xóa các bản ghi này không?";
+      this.popupType = "danger";
+      this.popupTitle = "Xóa các bản ghi";
+    },
+    hidePopup() {
+      this.isShowPopup = false;
+    },
+    closeToolTip() {
+      this.tooltipScaleClass = "scale0";
+    },
+    btnToggleOnClick() {
+      this.isCollapseMenu = !this.isCollapseMenu;
+      eventBus1.$emit('collapseMenu',this.isCollapseMenu);
     },
   },
 };
@@ -100,18 +177,6 @@ export default {
   width: 8px;
   background-color: lightgray;
 }
-
-/*.dropdown * :-webkit-scrollbar {
-    width: 1px;
-    background-color: #ffffff;
-    border-radius: 1px;
-}
-
-.dropdown *:-webkit-scrollbar-thumb {
-    background-color: grey;
-    border-radius: 1px;
-}
-*/
 
 body {
   margin: 0;

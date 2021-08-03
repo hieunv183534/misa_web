@@ -6,6 +6,7 @@
     v-bind:value="inputValue"
     v-bind:id="inputId"
     @change ="$emit('input', $event.target.value)"
+    @blur="$emit('input-blur')"
   />
 </template>
 
@@ -17,7 +18,11 @@ export default {
     inputType: String,
     inputPlacehoder: String,
     inputValue: String,
-    inputId: String
+    inputId: String,
+    inputRequied:{
+      type: Boolean,
+      default: false
+    }
   },
 };
 </script>
