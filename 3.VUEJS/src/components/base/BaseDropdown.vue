@@ -110,7 +110,7 @@ export default {
       var vm = this;
       if (this.dropdownTitle == "Positions" || this.dropdownTitle == "Positions1") {
         if(this.dropdownTitle == "Positions1"){
-          this.dropdownText="Tất cả vị trí";
+          // this.dropdownText="Tất cả vị trí";
         }
         axios
           .get("http://cukcuk.manhnv.net/v1/Positions")
@@ -123,7 +123,7 @@ export default {
           });
       } else if (this.dropdownTitle == "Departments" || this.dropdownTitle == "Departments1") {
         if(this.dropdownTitle == "Departments1"){
-          this.dropdownText="Tất cả phòng ban";
+          // this.dropdownText="Tất cả phòng ban";
         }
         axios
           .get("http://cukcuk.manhnv.net/api/Department")
@@ -147,6 +147,9 @@ export default {
           { itemId : '2', itemName : "Đang thử việc" }
         ];
       }
+      setTimeout(()=>{
+        this.$emit('returnListItems',vm.itemDropdowns, vm.dropdownTitle);
+      },5000)
     },
     itemOnClick(item){
       this.$emit('dropdownOnSelect', item);
@@ -203,12 +206,12 @@ export default {
 }
 
 .dropdown .dropdown-main .icon i {
-  transition: 1s;
+  transition: 0.5s;
 }
 
 .dropdown .dropdown-main:focus .icon i {
   transform: rotate(180deg);
-  transition: 1s;
+  transition: 0.5s;
 }
 
 .dropdown .dropdown-main:focus {
@@ -224,7 +227,7 @@ export default {
   height: 0;
   background-color: white;
   /* display: none; */
-  transition: 1s;
+  transition: 0.5s;
   overflow-y: scroll;
   /*overflow-y: overlay;*/
   z-index: 999;

@@ -113,7 +113,9 @@ export default {
     checkcheck(id) {
       if (this.checkedEmployees.includes(id)) {
         this.checkedEmployees = this.checkedEmployees.filter((e) => e !== id);
+        if(this.checkedEmployees.length ==0){
         this.$emit('hideDeleteBtn');
+        }
       } else {
         this.checkedEmployees.push(id);
         this.$emit('showDeleteBtn');
@@ -139,7 +141,8 @@ export default {
             vm.checkedEmployees = vm.checkedEmployees.filter((e) => e !== item);
             if (vm.checkedEmployees.length == 0) {
               vm.loadData();
-              eventBus.$emit('showTooltipDeleteSuccess')
+              eventBus.$emit('showTooltipDeleteSuccess');
+              vm.$emit('hideDeleteBtn');
             }
           });
       });

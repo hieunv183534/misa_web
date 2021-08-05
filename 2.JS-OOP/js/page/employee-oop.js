@@ -471,12 +471,12 @@ class EmployeeJS {
         let value = $(thisElement).val();
         if (value == '') {
             // chuyển border thành màu đỏ cảnh báo và khi hover hiện thông tin cảnh báo
-            $(this).addClass('border-red');
-            $(this).attr('title', 'Thông tin này bắt buộc nhập!');
+            $(thisElement).addClass('border-red');
+            $(thisElement).attr('title', 'Thông tin này bắt buộc nhập!');
             ToolTipJS.showMes('danger', 'Thông tin này bắt buộc nhập!')
         } else {
-            $(this).removeClass('border-red');
-            $(this).removeAttr('title');
+            $(thisElement).removeClass('border-red');
+            $(thisElement).removeAttr('title');
         }
     }
 

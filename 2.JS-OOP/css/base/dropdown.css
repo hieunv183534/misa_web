@@ -37,12 +37,12 @@
         }
 
             .dropdown .dropdown-main .icon i {
-                transition: 1s;
+                transition: 0.5s;
             }
 
         .dropdown .dropdown-main:focus .icon i {
             transform: rotate(180deg);
-            transition: 1s;
+            transition: 0.5s;
         }
 
         .dropdown .dropdown-main:focus {
@@ -60,7 +60,7 @@
         height: 0;
         background-color: white;
         /* display: none; */
-        transition: 1s;
+        transition: 0.5s;
         overflow-y: scroll;
         /*overflow-y: overlay;*/
     }

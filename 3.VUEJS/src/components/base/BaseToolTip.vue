@@ -74,7 +74,7 @@ export default {
   top: 4px;
   left: 50%;
   margin-left: -165px;
-  z-index: 50000;
+  z-index: 50000; 
 }
 
 .toast-messenger {

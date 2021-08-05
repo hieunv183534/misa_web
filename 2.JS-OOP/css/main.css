@@ -9,6 +9,7 @@
 @import url('base/toast-messenger.css');
 @import url('base/popup.css');
 @import url('common/my-ui.css');
+@import url('base/covid.css');
 
 @font-face {
     font-family: 'GoogleSans-Bold';

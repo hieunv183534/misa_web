@@ -18,25 +18,25 @@
               <div class="small-info">
                 <p>Mã nhân viên (<font color="red">*</font>)</p>
                 <Input
-                  inputClass="autofocus"
                   inputType="text"
                   inputPlacehoder=""
                   :inputValue="employeeCode"
                   inputId="inputEmployeeCode"
                   v-model="employeeCode"
                   @input-blur="validateEmployeeCode"
+                  :isBorderRed="employeeCodeValidate"
                 />
               </div>
               <div class="small-info">
                 <p>Họ và tên(<font color="red">*</font>)</p>
                 <Input
-                  inputClass=""
                   inputType="text"
                   inputPlacehoder=""
                   :inputValue="fullName"
                   inputId="inputFullName"
                   v-model="fullName"
                   @input-blur="validateFullName"
+                  :isBorderRed="fullNameValidate"
                 />
               </div>
             </div>
@@ -44,7 +44,6 @@
               <div class="small-info">
                 <p>Ngày sinh</p>
                 <Input
-                  inputClass=""
                   inputType="date"
                   inputPlacehoder=""
                   :inputValue="dateOfBirth"
@@ -61,6 +60,8 @@
                   :dropdownValue="dropdownGenderObj.id"
                   dropdownTitle="Gender"
                   @dropdownOnSelect="dropdownGenderOnSelect"
+                  v-model="gender"
+                  @returnListItems ="getListItems"
                 />
               </div>
             </div>
@@ -68,19 +69,18 @@
               <div class="small-info">
                 <p>Số CMND/Căn cước(<font color="red">*</font>)</p>
                 <Input
-                  inputClass=""
                   inputType="text"
                   inputPlacehoder=""
                   :inputValue="identityNumber"
                   inputId="inputIdentityNumber"
                   v-model="identityNumber"
                   @input-blur="validateIdentityNumber"
+                  :isBorderRed="identityNumberValidate"
                 />
               </div>
               <div class="small-info">
                 <p>Ngày cấp</p>
                 <Input
-                  inputClass=""
                   inputType="date"
                   inputPlacehoder=""
                   :inputValue="identityDate"
@@ -93,7 +93,6 @@
               <div class="small-info">
                 <p>Nơi cấp</p>
                 <Input
-                  inputClass=""
                   inputType="text"
                   inputPlacehoder=""
                   :inputValue="identityPlace"
@@ -106,25 +105,25 @@
               <div class="small-info">
                 <p>Email(<font color="red">*</font>)</p>
                 <Input
-                  inputClass=""
                   inputType="text"
                   inputPlacehoder=""
                   :inputValue="email"
                   inputId="inputEmail"
                   v-model="email"
                   @input-blur="validateEmail"
+                  :isBorderRed="emailValidate"
                 />
               </div>
               <div class="small-info">
                 <p>Số điện thoại(<font color="red">*</font>)</p>
                 <Input
-                  inputClass=""
                   inputType="text"
                   inputPlacehoder=""
                   :inputValue="phoneNumber"
                   inputId="inputPhoneNumber"
                   v-model="phoneNumber"
                   @input-blur="validatePhoneNumber"
+                  :isBorderRed="phoneNumberValidate"
                 />
               </div>
             </div>
@@ -142,6 +141,7 @@
                   dropdownTitle="Positions"
                   @dropdownOnSelect="dropdownPositionOnSelect"
                   v-model="positionId"
+                  @returnListItems ="getListItems"
                 />
               </div>
               <div class="small-info">
@@ -153,6 +153,8 @@
                   :dropdownText="dropdownDepartmentObj.name"
                   dropdownTitle="Departments"
                   @dropdownOnSelect="dropdownDepartmentOnSelect"
+                  v-model="departmentId"
+                  @returnListItems ="getListItems"
                 />
               </div>
             </div>
@@ -160,7 +162,6 @@
               <div class="small-info">
                 <p>Mã số thuế cá nhân</p>
                 <Input
-                  inputClass=""
                   inputType="text"
                   inputPlacehoder=""
                   :inputValue="personalTaxCode"
@@ -184,7 +185,6 @@
               <div class="small-info">
                 <p>Ngày gia nhập công ty</p>
                 <Input
-                  inputClass=""
                   inputType="date"
                   inputPlacehoder=""
                   :inputValue="joinDate"
@@ -201,6 +201,8 @@
                   :dropdownValue="dropdownWorkStatusObj.id"
                   dropdownTitle="WorkStatus"
                   @dropdownOnSelect="dropdownWorkStatusOnSelect"
+                  v-model="workStatus"
+                  @returnListItems ="getListItems"
                 />
               </div>
             </div>
@@ -256,6 +258,7 @@ export default {
   data() {
     return {
       employee: {},
+      //các data lưu trữ các trường của employee
       employeeCode: "",
       fullName: "",
       gender: "",
@@ -275,15 +278,22 @@ export default {
       dropdownPositionObj: {},
       dropdownDepartmentObj: {},
       dropdownWorkStatusObj: {},
+      employeeCodeValidate: false,
+      fullNameValidate: false,
+      identityNumberValidate: false,
+      emailValidate: false,
+      phoneNumberValidate: false,
+      dropdownGenderItems : [],
+      dropdownPositionItems:[],
+      dropdownDepartmentItems: [],
+      dropdownWorkStatusItems:[]
     };
   },
   created() {
     eventBus1.$on("addOrUpdateData", () => {
       if (this.mode == 1) {
-        alert("bắt đầu thêm")
         this.addData();
       } else {
-        alert("bắt đầu sửa")
         this.updateData();
       }
     });
@@ -333,8 +343,8 @@ export default {
       this.employee.Salary = this.salary;
       this.employee.PositionId = this.positionId;
       this.employee.DepartmentId = this.departmentId;
-      this.employee.Gender = this.gender;
-      this.employee.WorkStatus = this.workStatus;
+      this.employee.Gender = parseInt(this.gender);
+      this.employee.WorkStatus = parseInt(this.workStatus) ;
 
       if (
         this.employee.EmployeeCode !== "" &&
@@ -384,31 +394,67 @@ export default {
     validateEmployeeCode() {
       if (this.employeeCode == "") {
         eventBus1.$emit("showTooltipInputRequied");
+        this.employeeCodeValidate = true;
+      } else {
+        this.employeeCodeValidate = false;
       }
     },
     validateFullName() {
       if (this.fullName == "") {
         eventBus1.$emit("showTooltipInputRequied");
+        this.fullNameValidate = true;
+      } else {
+        this.fullNameValidate = false;
       }
     },
     validateIdentityNumber() {
       if (this.identityNumber == "") {
         eventBus1.$emit("showTooltipInputRequied");
+        this.identityNumberValidate = true;
+      } else {
+        this.identityNumberValidate = false;
       }
     },
     validateEmail() {
       if (this.email == "") {
         eventBus1.$emit("showTooltipInputRequied");
+        this.emailValidate = true;
+      } else {
+        this.emailValidate = false;
       }
     },
     validatePhoneNumber() {
       if (this.phoneNumber == "") {
         eventBus1.$emit("showTooltipInputRequied");
+        this.phoneNumberValidate = true;
+      } else {
+        this.phoneNumberValidate = false;
       }
     },
+    getListItems(listItem, dropdownTitle){
+      if(dropdownTitle== 'Gender'){
+        this.dropdownGenderItems = listItem;
+      }
+      if(dropdownTitle== 'Positions'){
+        this.dropdownPositionItems = listItem;
+      }
+      if(dropdownTitle== 'Departments'){
+        this.dropdownDepartmentItems = listItem;
+      }
+      if(dropdownTitle== 'WorkStatus'){
+        this.dropdownWorkStatusItems = listItem;
+      }
+    }
   },
   watch: {
     isReOpen() {
+      //loại bỏ border red của lần validate trước
+      this.employeeCodeValidate = false;
+      this.fullNameValidate = false;
+      this.identityNumberValidate = false;
+      this.emailValidate = false;
+      this.phoneNumberValidate = false;
+
       if (this.mode == 1) {
         //call api lấy dữ liệu newEmployeeCode
         axios
@@ -448,23 +494,34 @@ export default {
             this.joinDate = this.formatDateToValue(res.data.JoinDate);
             this.personalTaxCode = res.data.PersonalTaxCode;
             this.salary = res.data.Salary + "";
-            this.dropdownGenderObj = { id: res.data.Gender + "", name: "" };
-            console.log(this.dropdownGenderObj.id);
-            this.dropdownPositionObj = {
-              id: res.data.PositionId + "",
-              name: "",
-            };
-            console.log(this.dropdownPositionObj.id);
-            this.dropdownDepartmentObj = {
-              id: res.data.DepartmentId + "",
-              name: "",
-            };
-            console.log(this.dropdownDepartmentObj.id);
-            this.dropdownWorkStatusObj = {
-              id: res.data.WorkStatus + "",
-              name: "",
-            };
-            console.log(this.dropdownWorkStatusObj.id);
+            // match dropdown gender với id item gender
+            this.dropdownGenderObj.id = res.data.Gender +'';
+            this.dropdownGenderItems.forEach((item)=>{
+              if(item.itemId == this.dropdownGenderObj.id){
+                this.dropdownGenderObj.name = item.itemName;
+              }
+            })
+            // match dropdown positions với id item positions
+            this.dropdownPositionObj.id = res.data.PositionId;
+            this.dropdownPositionItems.forEach((item)=>{
+              if(item.PositionId == this.dropdownPositionObj.id){
+                this.dropdownPositionObj.name = item.PositionName;
+              }
+            })
+            // match dropdown departments với id item departments
+            this.dropdownDepartmentObj.id = res.data.DepartmentId;
+            this.dropdownDepartmentItems.forEach((item)=>{
+              if(item.DepartmentId == this.dropdownDepartmentObj.id){
+                this.dropdownDepartmentObj.name = item.DepartmentName;
+              }
+            })
+             // match dropdown workStatus với id item workStatus
+            this.dropdownWorkStatusObj.id = res.data.WorkStatus +'';
+            this.dropdownWorkStatusItems.forEach((item)=>{
+              if(item.itemId == this.dropdownWorkStatusObj.id){
+                this.dropdownWorkStatusObj.name = item.itemName;
+              }
+            })
           })
           .catch((res) => {
             console.log(res);

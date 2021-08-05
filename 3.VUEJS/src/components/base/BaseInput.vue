@@ -1,6 +1,6 @@
 <template>
   <input
-    v-bind:class="inputClass"
+    v-bind:class="{'border-red': isBorderRed}"
     v-bind:type="inputType"
     v-bind:placeholder="inputPlacehoder"
     v-bind:value="inputValue"
@@ -14,7 +14,6 @@
 export default {
   name: "BaseInput",
   props: {
-    inputClass: String,
     inputType: String,
     inputPlacehoder: String,
     inputValue: String,
@@ -22,7 +21,8 @@ export default {
     inputRequied:{
       type: Boolean,
       default: false
-    }
+    },
+    isBorderRed: Boolean,
   },
 };
 </script>
@@ -42,6 +42,10 @@ input {
 
 input:focus {
   border-color: #019160;
+}
+
+input.border-red{
+  border-color: #FF4747;
 }
 
 input.input-search {
