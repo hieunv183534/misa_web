@@ -1,5 +1,5 @@
-<template>
-  <div class="content" :class="{'collapse-content' : isCollapseMenu}">
+﻿<template>
+  <div class="content" v-bind:class="{'collapse-content' : isCollapseMenu}">
       <ContentHeader/>
       <EmployeeList
       @btnAddOnClick = "$emit('showAddForm')"
@@ -18,12 +18,14 @@ export default {
     components:{
         ContentHeader,EmployeeList
     },
-    methods:{
+        methods: {
+        // nhận sự kiện dbclick tr từ grid và truyền tiếp lên cho parent(App)
         chooseAnEmployee1(employeeId){
             this.$emit('showEditForm',employeeId)
         }
     },
-    props:{
+        props: {
+        // để truyền vào giá tri true/false tương ứng với thu nhỏ hay phóng to menu=> page này cũng phải thay đổi kích thước theo 
         isCollapseMenu: Boolean
     }
 };

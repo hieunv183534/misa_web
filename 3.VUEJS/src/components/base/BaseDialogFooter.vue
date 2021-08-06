@@ -48,6 +48,11 @@ export default {
 .employee-profile-dialog .dialog-footer .btn-cancel {
   border: none;
   background-color: #e9ebee;
+  border-radius:4px ;
+}
+
+.employee-profile-dialog .dialog-footer .btn-cancel:hover{
+  background-color: #e5e5e5;
 }
 
 .employee-profile-dialog .dialog-footer .btn-cancel i{

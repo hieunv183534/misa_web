@@ -5,84 +5,75 @@
             <div v-if="!isCollapse" class="logo"></div>
         </div>
         <div class="menu-body">
-            <MenuItem
-            menuItemClass="dashboard-icon"
-            menuItemText="Tổng quan"
-            :isShowText="!isCollapse"
-            />
-            <MenuItem
-            menuItemClass="document-online-icon"
-            menuItemText="Hồ sơ online"
-            :isShowText="!isCollapse"
-            />
-            <MenuItem
-            menuItemClass="report-icon"
-            menuItemText="Theo dõi chi"
-            :isShowText="!isCollapse"
-            />
-            <MenuItem
-            menuItemClass="dashboard-icon"
-            menuItemText="Danh mục khách hàng"
-            :isShowText="!isCollapse"
-            />
-            <MenuItem
-            menuItemClass="dic-employee-icon"
-            menuItemText="Danh mục nhân viên"
-            :isShowText="!isCollapse"
-            />
-            <MenuItem
-            menuItemClass="setting-icon"
-            menuItemText="Thiết lập"
-            :isShowText="!isCollapse"
-            />
+            <MenuItem menuItemClass="dashboard-icon"
+                      menuItemText="Tổng quan"
+                      :isShowText="!isCollapse" />
+            <MenuItem menuItemClass="document-online-icon"
+                      menuItemText="Hồ sơ online"
+                      :isShowText="!isCollapse" />
+            <MenuItem menuItemClass="report-icon"
+                      menuItemText="Theo dõi chi"
+                      :isShowText="!isCollapse" />
+            <MenuItem menuItemClass="dashboard-icon"
+                      menuItemText="Danh mục khách hàng"
+                      :isShowText="!isCollapse" />
+            <MenuItem menuItemClass="dic-employee-icon"
+                      menuItemText="Danh mục nhân viên"
+                      :isShowText="!isCollapse" />
+            <MenuItem menuItemClass="setting-icon"
+                      menuItemText="Thiết lập"
+                      :isShowText="!isCollapse" />
         </div>
     </div>
 </template>
 
 <script>
-import MenuItem from "./TheMenuItem.vue"
+    import MenuItem from "./TheMenuItem.vue"
 
-export default {
-    name: 'TheMenu',
-    components:{
-        MenuItem
-    },
-    props:{
-        isCollapseMenu: Boolean,
-    },
-    data(){
-        return{
-            isCollapse: false
-        }
-    },
-    watch:{
-        isCollapseMenu(){
-            if(this.isCollapseMenu == true){
-                this.isCollapse = this.isCollapseMenu;
-            }else{
-                setTimeout(()=>{
+    export default {
+        name: 'TheMenu',
+        components: {
+            MenuItem
+        },
+        props: {
+            // đẻ truyền vào giá trị có hay không collapse menu
+            isCollapseMenu: Boolean,
+        },
+        data() {
+            return {
+                // nhận giá trị từ prop isCollapseMenu để bind class tương ứng
+                isCollapse: false
+            }
+        },
+        watch: {
+            // thực hiện gán giá trị của isCollapseMenu cho data isCollapse => bind class tương ứng. có transition 0.5s
+            isCollapseMenu() {
+                if (this.isCollapseMenu == true) {
                     this.isCollapse = this.isCollapseMenu;
-                },500);
+                } else {
+                    setTimeout(() => {
+                        this.isCollapse = this.isCollapseMenu;
+                    }, 500);
+                }
             }
         }
     }
-}
 </script>
 
 <style scoped>
-.menu {
-    position: relative;
-    width: 225px;
-    height: 100vh;
-    border-right: solid 1px #e4e4e4;
-    float: left;
-    transition: 0.5s;
-    overflow: hidden;
-}
+    .menu {
+        position: relative;
+        width: 225px;
+        height: 100vh;
+        border-right: solid 1px #e4e4e4;
+        float: left;
+        transition: 0.5s;
+        overflow: hidden;
+    }
 
-.collapse-menu{
-    width: 52px;
-}
+    .collapse-menu {
+        width: 52px;
+    }
 
     .menu .menu-header {
         width: 100%;
@@ -121,7 +112,7 @@ export default {
         transition: 0.5s;
     }
 
-        
+
     /*.menu .menu-out {
         position: absolute;
         width: 24px;
