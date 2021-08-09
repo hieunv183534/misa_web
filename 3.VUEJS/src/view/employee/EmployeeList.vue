@@ -71,9 +71,9 @@
                 // để nhận và truyền giá trị cho grid (load lại dữ liệu hay không)
                 loadAgain: false,
                 // để lưu id và name từ item dropdown selected mà dropdown truyền lên => để gán cho value và text cho dropdown tương ứng
-                dropdownPositionObj: {},
+                dropdownPositionObj: { name: "Tất cả vị trí"},
                 // để lưu id và name từ item dropdown selected mà dropdown truyền lên => để gán cho value và text cho dropdown tương ứng
-                dropdownDepartmentObj: {},
+                dropdownDepartmentObj: {name: "Tất cả phòng ban"},
                 // nhân giá trị true/false truyền lên từ grid => v-if để ẩn hiện btn delete
                 isShowDeleteBtn: false,
             };
@@ -93,6 +93,8 @@
             },
             dropdownPositionOnSelect(obj) {
                 this.dropdownPositionObj = obj;
+                // lọc dữ liệu theo vị trí nhân viên
+                
             },
             dropdownDepartmentOnSelect(obj) {
                 this.dropdownDepartmentObj = obj;
@@ -114,6 +116,7 @@
         float: left;
         padding: 24px;
         box-sizing: border-box;
+        background-color: #E9EBEE;
     }
 
         .content .content-body .content-title {

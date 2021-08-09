@@ -47,6 +47,7 @@
 
         .button:hover {
             background-color: #2fbe8e;
+            border: 1px solid #2fbe8e;
         }
         /*
     button p {
@@ -80,7 +81,7 @@
 
             .button.button-refresh:hover {
                 background-color: #e9ebee;
-                border: none;
+                border: 1px solid #e9ebee;
             }
 
             .button.button-refresh i {
@@ -99,6 +100,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            background-color: #E9EBEE;
         }
 
             .content .content-body .content-paging .paging-center button.circle:hover {
@@ -112,6 +114,7 @@
             .paging-center
             button.circle:nth-child(3n + 1) {
                 background-color: #019160;
+                color: #fff;
             }
 
                 .content
@@ -130,6 +133,19 @@
         display: flex;
         align-items: center;
     }
+
+.content .content-body .content-paging .paging-center button.btn-inline{
+    background-color: #E9EBEE;
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    justify-content: center;
+
+}
+
+.content .content-body .content-paging .paging-center button.btn-inline:hover{
+    background-color: #fff;
+}
 
     .content .content-body .content-paging .paging-center button.btn-inline i {
         font-size: 20px;

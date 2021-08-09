@@ -19,7 +19,8 @@
                       :isShowText="!isCollapse" />
             <MenuItem menuItemClass="dic-employee-icon"
                       menuItemText="Danh mục nhân viên"
-                      :isShowText="!isCollapse" />
+                      :isShowText="!isCollapse" 
+                      menuItemType="active"/>
             <MenuItem menuItemClass="setting-icon"
                       menuItemText="Thiết lập"
                       :isShowText="!isCollapse" />

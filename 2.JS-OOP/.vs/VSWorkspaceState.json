@@ -1,8 +1,10 @@
 {
   "ExpandedNodes": [
     "",
+    "\\js",
+    "\\js\\page",
     "\\page"
   ],
-  "SelectedNode": "\\page\\employee.html",
+  "SelectedNode": "\\js\\page\\employee-oop.js",
   "PreviewInSolutionExplorer": false
 }

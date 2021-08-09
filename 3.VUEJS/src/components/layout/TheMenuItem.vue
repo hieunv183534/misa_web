@@ -85,4 +85,17 @@
             overflow-x: hidden;
             white-space: nowrap;
         }
+
+        .active{
+            background-color: #019160 !important;
+        }
+
+        .active .menu-icon{
+            background-color: #019160 !important;
+        }
+
+        .active p{
+            color: #fff !important;
+        }
+
 </style>

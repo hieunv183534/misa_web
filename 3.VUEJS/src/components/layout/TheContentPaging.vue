@@ -1,7 +1,7 @@
 <template>
   <div class="content-paging">
     <div class="paging-left">
-      <p>Hiển thị 1-10/1000 nhân viên</p>
+      <p>Hiển thị <b>1-10/1000</b> nhân viên</p>
     </div>
     <div class="paging-center">
       <Button
@@ -54,7 +54,11 @@
       />
     </div>
     <div class="paging-right">
-      <p>10 nhân viên/trang</p>
+      <p><b>10</b> nhân viên/trang</p>
+      <div class="up-and-down">
+        <button><i class="fas fa-chevron-up"></i></button>
+        <button><i class="fas fa-chevron-down"></i></button>
+      </div>
     </div>
   </div>
 </template>
@@ -102,16 +106,43 @@ export default {
 }
 
 .content .content-body .content-paging .paging-right {
-  height: 100%;
-  width: 300px;
+  height: 40px;
+  width: 150px;
+  border-radius:4px ;
   position: absolute;
   right: 0;
+  top: 8px;
+  background-color: #fff;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
 }
 
 .content .content-body .content-paging .paging-right > p {
-  line-height: 56px;
+  display: block;
+  line-height: 40px;
+  float: left;
+  width: 125px;
+  text-align: center;
+}
+
+.up-and-down{
+  width: 25px;
+  height: 60%;
+  float: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-bottom: 2px;
+  box-sizing: border-box;
+}
+
+.up-and-down button{
+  width: 100%;
+  height: 50%;
+  float: left;
+  border: none;
+  outline: none;
+  background-color: #fff;
 }
 </style>

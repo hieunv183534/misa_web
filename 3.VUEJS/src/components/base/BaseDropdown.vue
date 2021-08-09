@@ -3,7 +3,7 @@
          v-bind:class="['dropdown', dropdownClass]"
          style="border: none"
          v-bind:value="dropdownValue">
-        <button class="dropdown-main">
+        <button class="dropdown-main" >
             <p>{{ dropdownText }}</p>
             <div class="icon"><i class="fas fa-chevron-down"></i></div>
         </button>
@@ -86,7 +86,6 @@
             // để truyền vào dropdown text
             dropdownText: {
                 type: String,
-                default: 'Tất cả'
             },
             // để truyền vào title cho dropdown (để phân biệt đây đg là dropdown về nội dung gì)
             dropdownTitle: String,
@@ -103,9 +102,9 @@
             loadDropdown() {
                 var vm = this;
                 if (this.dropdownTitle == "Positions" || this.dropdownTitle == "Positions1") {
-                    if (this.dropdownTitle == "Positions1") {
-                        // this.dropdownText="Tất cả vị trí";
-                    }
+                    // if (this.dropdownTitle == "Positions1") {
+                    //     this.dropdownText="Tất cả vị trí";
+                    // }
                     axios
                         .get("http://cukcuk.manhnv.net/v1/Positions")
                         .then((res) => {
@@ -116,9 +115,9 @@
                             console.log(res);
                         });
                 } else if (this.dropdownTitle == "Departments" || this.dropdownTitle == "Departments1") {
-                    if (this.dropdownTitle == "Departments1") {
-                        // this.dropdownText="Tất cả phòng ban";
-                    }
+                    // if (this.dropdownTitle == "Departments1") {
+                    //     // this.dropdownText="Tất cả phòng ban";
+                    // }
                     axios
                         .get("http://cukcuk.manhnv.net/api/Department")
                         .then((res) => {
@@ -153,7 +152,8 @@
              */
             itemOnClick(item) {
                 this.$emit('dropdownOnSelect', item);
-            }
+                console.log(item);
+            },
         },
         data() {
             return {

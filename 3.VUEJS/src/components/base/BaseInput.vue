@@ -5,7 +5,9 @@
            v-bind:value="inputValue"
            v-bind:id="inputId"
            @change="$emit('input', $event.target.value)"
-           @blur="$emit('input-blur')" />
+           @blur="$emit('input-blur')"
+           ref="autofocus"
+            />
 </template>
 
 <script>
@@ -28,7 +30,16 @@
                 default: false
             },
             isBorderRed: Boolean,
+            isFocus:{
+                type: Boolean,
+                default: false
+            }
         },
+        watch:{
+            isFocus(){
+                this.$refs.autofocus.focus();
+            }
+        }
     };
 </script>
 
@@ -54,7 +65,7 @@
             }
 
             input.input-search {
-                font-family: GoogleSans-Italic;
+                font-family: GoogleSans-Regular;
             }
 
         select.chondi {
@@ -84,17 +95,7 @@
             padding-right: 50px;
         }
 
-        /*checkbox*/
-
-        /*input.checkbox{
-        width:40px;
-    }*/
-
-        /*input[title]:hover::after {
-        content: attr(title);
-        position: absolute;
-        top: -100%;
-        left: 0;
-        background-color:aqua;
-    }*/
+        .text-align-right{
+            text-align: right;
+        }
 </style>
