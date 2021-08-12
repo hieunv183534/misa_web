@@ -44,6 +44,8 @@
             popupTitle: String,
             // để truyền vào nội dung cho popup
             popupContent: String,
+            // để truyền vào chuỗi xác định chức năng hiện tại
+            mode: String
         },
         components: {
             Button,
@@ -60,7 +62,13 @@
             },
             // khi click btnx (btn xanh lá cây) => gọi eventBus1 emit ra sự kiện xác nhận thêm/sửa bản ghi và ẩn popup
             btnXOnClick() {
-                eventBus1.$emit('addOrUpdateData');
+                if(this.mode=="addOrEdit"){
+                    eventBus1.$emit('addOrUpdateData');
+                    this.$emit('hideDialog')
+                }else if(this.mode=="copy"){
+                    eventBus1.$emit('CopyData');
+                }
+                
                 this.hidePopup();
             }
         }

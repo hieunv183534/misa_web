@@ -107,24 +107,6 @@
                 background-color: #ffffff;
             }
 
-
-            .content
-            .content-body
-            .content-paging
-            .paging-center
-            button.circle:nth-child(3n + 1) {
-                background-color: #019160;
-                color: #fff;
-            }
-
-                .content
-                .content-body
-                .content-paging
-                .paging-center
-                button.circle:nth-child(3n + 1):hover {
-                    background-color: #2fbe8e;
-                }
-
     /*.content .content-body .content-paging .paging-center button*/
     .btn-inline {
         border: none;
@@ -150,4 +132,20 @@
     .content .content-body .content-paging .paging-center button.btn-inline i {
         font-size: 20px;
     }
+
+
+    /* paging */
+
+    .button-page-active {
+  background-color: #019160 !important;
+}
+
+.button-page-active p{
+    color: #fff;
+}
+
+.button-page-active:hover {
+  background-color: #019160 !important;
+}
+
 </style>

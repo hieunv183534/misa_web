@@ -3,7 +3,7 @@
          v-bind:class="['dropdown', dropdownClass]"
          style="border: none"
          v-bind:value="dropdownValue">
-        <button class="dropdown-main" >
+        <button class="dropdown-main">
             <p>{{ dropdownText }}</p>
             <div class="icon"><i class="fas fa-chevron-down"></i></div>
         </button>
@@ -152,8 +152,7 @@
              */
             itemOnClick(item) {
                 this.$emit('dropdownOnSelect', item);
-                console.log(item);
-            },
+            }
         },
         data() {
             return {
@@ -239,7 +238,7 @@
             /* height: auto;
     max-height: 210px; */
             height: 140px;
-            transition: 1s;
+            transition: 0.5s;
             background-color: white;
             z-index: 999;
             box-shadow: 1px 2px 4px 1px #454545;
@@ -253,7 +252,7 @@
             /* height: auto;
     max-height: 210px; */
             height: 140px;
-            transition: 1s;
+            transition: 0.5s;
             background-color: white;
             z-index: 99;
             box-shadow: 1px -2px 4px 1px #454545;

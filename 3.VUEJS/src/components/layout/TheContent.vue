@@ -5,6 +5,7 @@
       @btnAddOnClick = "$emit('showAddForm')"
       @chooseAnEmployee = "chooseAnEmployee1"
       @btnDeleteOnClick ="$emit('showDeletePopup')"
+      @btnCopyOnClick ="$emit('showCopyPopup')"
       />
   </div>
 </template>

@@ -4,7 +4,7 @@
            v-bind:placeholder="inputPlacehoder"
            v-bind:value="inputValue"
            v-bind:id="inputId"
-           @change="$emit('input', $event.target.value)"
+           @input="[$emit('inputOnInput'),$emit('input', $event.target.value)]"
            @blur="$emit('input-blur')"
            ref="autofocus"
             />

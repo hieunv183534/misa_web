@@ -2,12 +2,14 @@
   "ExpandedNodes": [
     "",
     "\\src",
+    "\\src\\assets",
+    "\\src\\assets\\img",
     "\\src\\components",
     "\\src\\components\\base",
     "\\src\\components\\layout",
     "\\src\\view",
     "\\src\\view\\employee"
   ],
-  "SelectedNode": "\\src\\main.js",
+  "SelectedNode": "\\src\\assets\\img\\loader.svg",
   "PreviewInSolutionExplorer": false
 }

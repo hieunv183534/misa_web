@@ -7,6 +7,7 @@
       @showAddForm="showAddForm"
       @showEditForm="showEditForm1"
       @showDeletePopup="showDeletePopup"
+      @showCopyPopup="showCopyPopup"
       :isCollapseMenu="isCollapseMenu"
     />
     <ToolTip
@@ -21,6 +22,8 @@
       :popupContent="popupContent"
       :popupType="popupType"
       @hidePopup1="hidePopup"
+      @hideDialog="hideDialog"
+      :mode="popupMode"
     />
     <EmployeeDialog
       :isShow="isShowAddDialog"
@@ -29,6 +32,7 @@
       :isReOpen="reOpen"
       @hideDialog="hideForm"
     />
+    <Loader v-if="isLoad"/>
   </div>
 </template>
 
@@ -40,6 +44,7 @@ import Content from "./components/layout/TheContent.vue";
 import ToolTip from "./components/base/BaseToolTip.vue";
 import Popup from "./components/base/BasePopup.vue";
 import EmployeeDialog from "./view/employee/EmployeeDialog.vue";
+import Loader from "./components/base/BaseLoader.vue"
 
 export default {
   name: "App",
@@ -49,6 +54,7 @@ export default {
     ToolTip,
     Popup,
     EmployeeDialog,
+    Loader,
   },
   created() {
     eventBus.$on("showTooltipDeleteSuccess", () => {
@@ -61,14 +67,29 @@ export default {
       this.tooltipText = "Đã thêm mới thành công !";
       this.tooltipScaleClass = "scale1";
     });
+    eventBus.$on("showTooltipCopySuccess", () => {
+      this.tooltipType = "success";
+      this.tooltipText = "Đã nhân bản thành công thành công !";
+      this.tooltipScaleClass = "scale1";
+    });
     eventBus.$on("showTooltipUpdateSuccess", () => {
       this.tooltipType = "success";
       this.tooltipText = "Đã cập nhật thành công !";
       this.tooltipScaleClass = "scale1";
-    });
+    }); 
     eventBus1.$on("showTooltipInputRequied", () => {
       this.tooltipType = "danger";
       this.tooltipText = "Thông tin này bắt buộc nhập !";
+      this.tooltipScaleClass = "scale1";
+    }); 
+    eventBus1.$on("showTooltipInvalidEmail", () => {
+      this.tooltipType = "warning";
+      this.tooltipText = "Email chưa đúng định dạng !";
+      this.tooltipScaleClass = "scale1";
+    });
+    eventBus1.$on("showTooltipInvalidSalary", () => {
+      this.tooltipType = "warning";
+      this.tooltipText = "Lương chưa đúng định dạng !";
       this.tooltipScaleClass = "scale1";
     });
     eventBus1.$on("showPopupConfirmAdd", () => {
@@ -76,29 +97,40 @@ export default {
       this.popupContent = "Bạn có muốn thêm nhân viên này vào danh sách không?";
       this.popupType = "warning";
       this.popupTitle = "Thêm mới bản ghi";
+      this.popupMode="addOrEdit"
     });
     eventBus1.$on("showPopupConfirmUpdate", () => {
       this.isShowPopup = true;
       this.popupContent = "Bạn có muốn cập nhật thông tin nhân viên này không?";
       this.popupType = "warning";
       this.popupTitle = "Cập nhật bản ghi";
+      this.popupMode="addOrEdit"
     });
     eventBus1.$on("showTooltipInputRequiedAll", () => {
       this.tooltipType = "danger";
       this.tooltipText = "Chưa nhập đủ các trường bắt buộc !";
       this.tooltipScaleClass = "scale1";
     });
+    eventBus1.$on('showLoader',()=>{
+      this.isLoad = true;
+    })
+    eventBus1.$on('hideLoader',()=>{
+      this.isLoad = false;
+    })
   },
   data() {
     return {
       isCollapseMenu: false,
       isShowAddDialog: false,
+      isLoad: false,
+      isShowDialog: false,
       forMode: 1,
       employeeId: "",
       reOpen: false,
       isShowPopup: false,
       popupContent: "",
       popupType: "",
+      popupMode: "",
       popupTitle: "",
       tooltipText: "",
       tooltipType: "",
@@ -124,9 +156,17 @@ export default {
     showDeletePopup() {
       this.isShowPopup = true;
       this.popupContent =
-        "Bạn có muốn xóa các bản ghi này không? Bạn có muốn xóa các bản ghi này không? Bạn có muốn xóa các bản ghi này không?";
+        "Bạn có muốn xóa các bản ghi này không?";
       this.popupType = "danger";
       this.popupTitle = "Xóa các bản ghi";
+    },
+    showCopyPopup() {
+      this.isShowPopup = true;
+      this.popupContent =
+        "Bạn có muốn nhân bản nhân viên này không?";
+      this.popupType = "warning";
+      this.popupTitle = "Nhân bản bản ghi";
+      this.popupMode="copy";
     },
     hidePopup() {
       this.isShowPopup = false;
@@ -138,6 +178,9 @@ export default {
       this.isCollapseMenu = !this.isCollapseMenu;
       eventBus1.$emit('collapseMenu',this.isCollapseMenu);
     },
+    hideDialog(){
+      this.isShowAddDialog = false;
+    }
   },
 };
 </script>

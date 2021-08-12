@@ -12,12 +12,20 @@ export default {
             isCheck: false,
         }
     },
+    props:{
+        chechOrNo: Boolean
+    },
     methods:{
         clickCheckBox(){
             this.$emit('checkboxOnClick');
 
             // thay đổi trang thái
             this.isCheck = !this.isCheck;
+        }
+    },
+    watch:{
+        chechOrNo(){
+            this.isCheck = this.chechOrNo;
         }
     }
 }

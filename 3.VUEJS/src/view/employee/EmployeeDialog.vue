@@ -179,6 +179,9 @@
                   :inputValue="salary"
                   inputId="inputSalary"
                   v-model="salary"
+                  @inputOnInput="inputSalaryOnInput"
+                  @input-blur="validateSalary"
+                  :isBorderRed="salaryValidate"
                 />
               </div>
             </div>
@@ -295,6 +298,7 @@ export default {
       identityNumberValidate: false,
       emailValidate: false,
       phoneNumberValidate: false,
+      salaryValidate: false,
 
       // nhận list id,name của các item từ dropdown truyền lên
       //=> để lấy text tương ứng match vào dropdown khi sửa vì đối tượng lấy từ api chỉ có id không có name
@@ -354,7 +358,7 @@ export default {
           eventBus.$emit("loadData");
         })
         .catch((res) => {
-          console.log(res);
+          console.log(res.devMsg);
         });
     },
     /**
@@ -373,7 +377,7 @@ export default {
       this.employee.IdentityPlace = this.identityPlace;
       this.employee.JoinDate = this.joinDate;
       this.employee.PersonalTaxCode = this.personalTaxCode;
-      this.employee.Salary = parseInt(this.salary.replaceAll('.','')) ;
+      this.employee.Salary = parseInt(this.salary.replaceAll(".", ""));
       this.employee.PositionId = this.positionId;
       this.employee.DepartmentId = this.departmentId;
       this.employee.Gender = parseInt(this.gender);
@@ -393,24 +397,6 @@ export default {
         }
       } else {
         eventBus1.$emit("showTooltipInputRequiedAll");
-      }
-    },
-    /**
-     * format date về dạng yyyy-mm-dd
-     * @param _date
-     * Author hieunv 01/08/2021
-     */
-    formatDateToValue(_date) {
-      if (_date != null) {
-        var date = new Date(_date);
-        var day = date.getDate();
-        day = day < 10 ? "0" + day : day;
-        var month = date.getMonth() + 1;
-        month = month < 10 ? "0" + month : month;
-        var year = date.getFullYear();
-        return year + "-" + month + "-" + day;
-      } else {
-        return "";
       }
     },
 
@@ -461,6 +447,9 @@ export default {
       if (this.email == "") {
         eventBus1.$emit("showTooltipInputRequied");
         this.emailValidate = true;
+      } else if (!this.isValidEmail(this.email)) {
+        eventBus1.$emit("showTooltipInvalidEmail");
+        this.emailValidate = true;
       } else {
         this.emailValidate = false;
       }
@@ -471,6 +460,14 @@ export default {
         this.phoneNumberValidate = true;
       } else {
         this.phoneNumberValidate = false;
+      }
+    },
+    validateSalary() {
+      if (isNaN(this.salary.replaceAll(".", ""))) {
+        eventBus1.$emit("showTooltipInvalidSalary");
+        this.salaryValidate = true;
+      } else {
+        this.salaryValidate = false;
       }
     },
 
@@ -491,6 +488,24 @@ export default {
         this.dropdownWorkStatusItems = listItem;
       }
     },
+    /**
+     * format date về dạng yyyy-mm-dd
+     * @param _date
+     * Author hieunv 01/08/2021
+     */
+    formatDateToValue(_date) {
+      if (_date != null) {
+        var date = new Date(_date);
+        var day = date.getDate();
+        day = day < 10 ? "0" + day : day;
+        var month = date.getMonth() + 1;
+        month = month < 10 ? "0" + month : month;
+        var year = date.getFullYear();
+        return year + "-" + month + "-" + day;
+      } else {
+        return "";
+      }
+    },
 
     /**
      * Format lương
@@ -506,13 +521,26 @@ export default {
         return "";
       }
     },
+    /**--------------------------------------------------------------------------------------
+     * Kiểm tra đinh dạng email
+     * @param {any} email
+     * Author hieunv
+     */
+    isValidEmail(email) {
+      const re =
+        //eslint-disable-next-line
+        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
+    },
+    inputSalaryOnInput() {
+      this.salary = this.formatSalary(this.salary.replaceAll(".", ""));
+    },
   },
   watch: {
     // khi prop isReOpen thay đổi => biết được form được mở lại , kết hợp với mode để thực hiện tính năng tương ứng
     isReOpen() {
-
-    // auto focus vào input EmployeeCode
-    this.changeFocus = !this.changeFocus;
+      // auto focus vào input EmployeeCode
+      this.changeFocus = !this.changeFocus;
 
       //loại bỏ border red của lần validate trước
       this.employeeCodeValidate = false;
@@ -594,9 +622,9 @@ export default {
           });
       }
     },
-    salary(){
-      this.salary = this.formatSalary(this.salary.replaceAll('.', ''));
-    }
+    salary() {
+      this.salary = this.formatSalary(this.salary.replaceAll(".", ""));
+    },
   },
 };
 </script>

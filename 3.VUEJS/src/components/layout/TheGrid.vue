@@ -34,12 +34,17 @@
           v-for="(employee, index) in employees"
           :key="employee.EmployeeId"
           @dblclick="$emit('tableRowOnDbClick', employee.EmployeeId)"
-          :class="{'active-row': checkedEmployees.includes(employee.EmployeeId) }"
+          :class="{
+            'active-row': checkedEmployees.includes(employee.EmployeeId),
+          }"
         >
           <td>
-            <CheckBox @checkboxOnClick="checkcheck(employee.EmployeeId)" />
+            <CheckBox
+              @checkboxOnClick="checkcheck(employee.EmployeeId)"
+              :chechOrNo="checkedEmployees.includes(employee.EmployeeId)"
+            />
           </td>
-          <td>{{index++}}</td>
+          <td>{{ index++ }}</td>
           <td>{{ employee.EmployeeCode }}</td>
           <td>{{ employee.FullName }}</td>
           <td>{{ formatDate(employee.DateOfBirth) }}</td>
@@ -91,11 +96,56 @@ export default {
       this.deleteData();
     });
 
+    // lắng nghe sự kiện nhân bản dữ liệu từ eventBus1
+    eventBus1.$on("CopyData", () => {
+      this.copyData();
+    });
+
     // lắng nghe sự kiện collapse menu từ eventBus1
     eventBus1.$on("collapseMenu", (_isCollapse) => {
       this.isCollase = _isCollapse;
       console.log(this.isCollase);
     });
+
+    // lắng nghe sự kiện lọc theo vi trí và phòng ban
+    eventBus1.$on(
+      "filterByPositionAndDepartment",
+      (_positionId, _departmentId) => {
+        console.log(_positionId + "///" + _departmentId);
+        if (_positionId == "" && _departmentId == "") {
+          this.loadData();
+        } else {
+          eventBus1.$emit('showLoader');
+          var url = "";
+          if (_positionId !== "" && _departmentId !== "") {
+            url =
+              "http://cukcuk.manhnv.net/v1/Employees/employeeFilter?pageSize=100&pageNumber=1&employeeFilter=nv&departmentId=" +
+              _departmentId +
+              "&positionId=" +
+              _positionId;
+          } else if (_positionId !== "" && _departmentId == "") {
+            url =
+              "http://cukcuk.manhnv.net/v1/Employees/employeeFilter?pageSize=100&pageNumber=1&employeeFilter=nv&positionId=" +
+              _positionId;
+          } else {
+            url =
+              "http://cukcuk.manhnv.net/v1/Employees/employeeFilter?pageSize=100&pageNumber=1&employeeFilter=nv&departmentId=" +
+              _departmentId;
+          }
+          var vm = this;
+          axios
+            .get(url)
+            .then((res) => {
+              console.log(res);
+              vm.employees = res.data.Data;
+              eventBus1.$emit('hideLoader');
+            })
+            .catch((res) => {
+              console.log(res);
+            });
+        }
+      }
+    );
   },
   methods: {
     /**
@@ -140,10 +190,20 @@ export default {
         this.checkedEmployees = this.checkedEmployees.filter((e) => e !== id);
         if (this.checkedEmployees.length == 0) {
           this.$emit("hideDeleteBtn");
+          this.$emit("hideCopyBtn");
+        } else if (this.checkedEmployees.length == 1) {
+          this.$emit("showCopyBtn");
+        } else {
+          this.$emit("hideCopyBtn");
         }
       } else {
         this.checkedEmployees.push(id);
-        this.$emit("showDeleteBtn");
+        if (this.checkedEmployees.length == 1) {
+          this.$emit("showDeleteBtn");
+          this.$emit("showCopyBtn");
+        } else {
+          this.$emit("hideCopyBtn");
+        }
       }
     },
     /**
@@ -151,11 +211,13 @@ export default {
      * Author hieunv (29/07/2021)
      * */
     loadData() {
+      eventBus1.$emit('showLoader');
       var vm = this;
       axios
         .get("http://cukcuk.manhnv.net/v1/Employees")
         .then((res) => {
           vm.employees = res.data;
+          eventBus1.$emit('hideLoader');
         })
         .catch((res) => {
           console.log(res);
@@ -179,6 +241,42 @@ export default {
             }
           });
       });
+    },
+    /**
+     * xử lsi sự kiện nhân bản nhân viên được chọn(hiện tại chỉ cho nhân bản 1 nhân viên 1 lần)
+     * Author hieunv 10/08/2021
+     */
+    async copyData() {
+      var vm = this;
+      var em = {};
+      em.EmployeeId = null;
+      //lấy lên dữ liệu nhân viên theo id
+      var emId = this.checkedEmployees[0];
+      await axios
+        .get("http://cukcuk.manhnv.net/v1/Employees/" + emId)
+        .then((res) => {
+          em = res.data;
+        });
+
+      // lấy mã nhân viên mới
+      await axios
+        .get("http://cukcuk.manhnv.net/v1/Employees/NewEmployeeCode")
+        .then((res) => {
+          em.EmployeeCode = res.data;
+        });
+      // post nhân bản lên server
+      axios
+        .post("http://cukcuk.manhnv.net/v1/Employees", em)
+        .then(() => {
+          this.$emit("hideDeleteBtn");
+          this.$emit("hideCopyBtn");
+          eventBus.$emit("showTooltipCopySuccess");
+          vm.loadData();
+          this.checkedEmployees = [];
+        })
+        .catch((res) => {
+          console.log(res.data);
+        });
     },
   },
   props: {
@@ -293,17 +391,17 @@ td:nth-child(1),
 th:nth-child(1) {
   min-width: 46px;
   max-width: 46px;
-  padding-left:16px ;
-  padding-right:10px ;
+  padding-left: 16px;
+  padding-right: 10px;
   box-sizing: border-box;
 }
 
 /*STT */
 td:nth-child(2),
 th:nth-child(2) {
-  min-width: 20px;
-  max-width: 20px;
-  padding-left:0 ;
+  min-width: 30px;
+  max-width: 30px;
+  padding-left: 0;
 }
 
 /*mã nhân viên*/
@@ -378,11 +476,11 @@ th:nth-child(12) {
   max-width: 170px;
 }
 
-.active-row{
-  background-color: #E3F3EE ;
+.active-row {
+  background-color: #e3f3ee;
 }
 
-.active-row:hover{
-  background-color: #E3F3EE !important;
+.active-row:hover {
+  background-color: #e3f3ee !important;
 }
 </style>
