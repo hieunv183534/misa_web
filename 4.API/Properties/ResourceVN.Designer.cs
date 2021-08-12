@@ -99,9 +99,9 @@ namespace MISA.CukCuk.api.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Mã Entity của bạn bị trùng rồi thì phải.
         /// </summary>
-        public static string MISA_Error_User_DuplicateFiled {
+        public static string MISA_Error_User_DuplicateField {
             get {
-                return ResourceManager.GetString("MISA.Error.User.DuplicateFiled", resourceCulture);
+                return ResourceManager.GetString("MISA.Error.User.DuplicateField", resourceCulture);
             }
         }
         

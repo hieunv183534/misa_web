@@ -171,7 +171,7 @@ namespace MISA.CukCuk.api.Controllers
                 colParams = colParams.Remove(colParams.Length - 1, 1);
                 var sql = $"insert into Employee({colNames}) values( {colParams} ) ";
                 var rowAffects = dbConnection.Execute(sql, param: parameters);
-                var response = StatusCode(200, rowAffects);
+                var response = StatusCode(201, rowAffects);
                 return response;
             }
             catch (Exception ex)
@@ -182,7 +182,7 @@ namespace MISA.CukCuk.api.Controllers
                     var errorObj = new
                     {
                         devMsg = ex.Message,
-                        userMsg = Properties.ResourceVN.MISA_Error_User_DuplicateFiled
+                        userMsg = Properties.ResourceVN.MISA_Error_User_DuplicateField
                     };
                     return StatusCode(400, errorObj);
                 }
@@ -207,8 +207,8 @@ namespace MISA.CukCuk.api.Controllers
         /// <summary>
         /// Cập nhật một khách hàng với CustomerId trước
         /// </summary>
-        /// <param name="id"> lấy từ route</param>
-        /// <param name="customer"> lấy từ body</param>
+        /// <param name="EmployeeIdStr"> lấy từ route</param>
+        /// <param name="employee"> lấy từ body</param>
         /// <returns>1 nếu sửa thành công và 0 là ngược lại</returns>
         /// Author hieunv 12/08/2021
         [HttpPut("{EmployeeIdStr}")]
@@ -300,7 +300,7 @@ namespace MISA.CukCuk.api.Controllers
                     var errorObj = new
                     {
                         devMsg = ex.Message,
-                        userMsg = Properties.ResourceVN.MISA_Error_User_DuplicateFiled
+                        userMsg = Properties.ResourceVN.MISA_Error_User_DuplicateField
                     };
                     return StatusCode(400, errorObj);
                 }
@@ -317,7 +317,6 @@ namespace MISA.CukCuk.api.Controllers
         }
 
         #endregion
-
 
         #region Xóa một nhân viên theo id
 

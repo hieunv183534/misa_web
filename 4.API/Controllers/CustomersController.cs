@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -15,54 +16,97 @@ namespace MISA.CukCuk.api.Controllers
     /// api danh mục nhân viên
     /// Author hieunv 03/08/2021
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class CustomersController : ControllerBase
     {
         IDbConnection dbConnection = DatabaseConnection.DbConnection;
+
+        #region Lấy toàn bộ ds khách hàng
+
         /// <summary>
         /// Lấy toàn bộ danh sách khách hàng
         /// </summary>
         /// <returns>Danh sách khách hàng</returns>
-        /// Author hieunv 03/08/2021
+        /// Author hieunv 12/08/2021
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult GetAll()
         {
-            var sql = "select * from Customer";
-            var customers = dbConnection.Query<Customer>(sql);
+            try
+            {
+                var sql = "select * from Customer";
+                var customers = dbConnection.Query<Customer>(sql);
+                if (customers.Count() > 0)
+                {
+                    return StatusCode(200, customers);
+                }
+                else
+                {
+                    return StatusCode(204, customers);
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorObj = new
+                {
+                    devMsg = ex.Message,
+                    userMsg = Properties.ResourceVN.MISA_Error,
+                };
+                return StatusCode(500, errorObj);
 
-            return Ok(customers);
+            }
         }
+
+        #endregion
+
+        #region Lấy thông tin 1 khách hàng theo id
 
         /// <summary>
         /// Lấy thông tin khách hàng theo id
         /// </summary>
-        /// <param name="CustomerId"></param>
+        /// <param name="CustomerIdStr"></param>
         /// <returns>Khách hàng</returns>
         /// Author hieunv 03/08/2021
-        [HttpGet("{CustomerId}")]
-        public IActionResult Get(string CustomerId)
+        [HttpGet("{CustomerIdStr}")]
+        public IActionResult GetById(string CustomerIdStr)
         {
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("@CustomerId", CustomerId);
-            var sql = $"select * from Customer where CustomerId= @CustomerId";
-            var customer = dbConnection.QueryFirstOrDefault(sql, param: parameters);
-            return Ok(customer);
+            Guid CustomerId;
+            try
+            {
+                // kiểm tra xem id truyền lên có đúng là guid hay chưa
+                try
+                {
+                    CustomerId = Guid.Parse(CustomerIdStr);
+                }
+                catch (Exception ex)
+                {
+                    var errorObj = new
+                    {
+                        devMsg = ex.Message,
+                        userMsg = Properties.ResourceVN.MISA_Error,
+                    };
+                    return StatusCode(400, errorObj);
+                }
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@CustomerId", CustomerId);
+                var sql = $"select * from Customer where CustomerId= @CustomerId";
+                var customer = dbConnection.QueryFirstOrDefault(sql, param: parameters);
+                return StatusCode(200, customer);
+            }
+            catch (Exception ex)
+            {
+                var errorObj = new
+                {
+                    devMsg = ex.Message,
+                    userMsg = Properties.ResourceVN.MISA_Error
+                };
+                return StatusCode(500, errorObj);
+            }
         }
 
-        ///// <summary>
-        ///// Lấy mã khách hàng
-        ///// </summary>
-        ///// <returns>mã khách hàng lớn nhất có trong csdl</returns>
-        //[HttpGet("NewCustomerId")]
-        //public IActionResult Get(int a)
-        //{
-        //    var sql = "select top 1 CustomerId from Customers order by CustomerId desc";
-        //    var customer = dbConnection.QueryFirstOrDefault(sql);
-        //    var newCustomerId = customer.CustomerId + 1;
-        //    return Ok(newCustomerId);
-        //}
+        #endregion
 
+        #region Thêm mới một khách hàng
 
         /// <summary>
         /// Thêm mới một khách hàng vào database
@@ -72,101 +116,244 @@ namespace MISA.CukCuk.api.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Customer customer)
         {
-
-            /// complete sql String
-            var colNames = string.Empty;
-            var colParams = string.Empty;
-            // đọc từng property
-            var properties = customer.GetType().GetProperties();
-
-            DynamicParameters parameters = new DynamicParameters();
-            // duyệt từng property
-
-            foreach (var prop in properties)
+            try
             {
-                // lấy tên prop
-                var propName = prop.Name;
+                // Kiểm tra mã khách hàng
 
+                if (customer.CustomerCode == "" || customer.CustomerCode == null)
+                {
+                    var errorObj = new
+                    {
+                        devMsg = Properties.ResourceVN.MISA_Error_Dev_NullField,
+                        userMsg = Properties.ResourceVN.MISA_Error_User_NullField
+                    };
+                    return StatusCode(400, errorObj);
+                }
 
-                // lấy value prop
-                var propValue = prop.GetValue(customer);
+                // kiểm tra email
 
-                // lấy kiểu prop
-                var propType = prop.PropertyType;
+                if (
+                    !Regex.IsMatch(customer.Email, @"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$")
+                    )
+                {
+                    var errorObj = new
+                    {
+                        devMsg = Properties.ResourceVN.MISA_Error_Dev_InvalidField,
+                        userMsg = Properties.ResourceVN.MISA_Error_User_InvalidField
+                    };
+                    return StatusCode(400, errorObj);
+                }
 
-                parameters.Add($"@{propName}", propValue);
+                // thêm id của employee là new guid
+                customer.CustomerId = Guid.NewGuid();
 
-                colNames += $"{propName},";
-                colParams += $"@{propName},";
+                /// complete sql String
+                var colNames = string.Empty;
+                var colParams = string.Empty;
+                // đọc từng property
+                var properties = customer.GetType().GetProperties();
 
+                DynamicParameters parameters = new DynamicParameters();
+                // duyệt từng property
+
+                foreach (var prop in properties)
+                {
+                    // lấy tên prop
+                    var propName = prop.Name;
+                    // lấy value prop
+                    var propValue = prop.GetValue(customer);
+                    // lấy kiểu prop
+                    var propType = prop.PropertyType;
+
+                    parameters.Add($"@{propName}", propValue);
+                    colNames += $"{propName},";
+                    colParams += $"@{propName},";
+                }
+                colNames = colNames.Remove(colNames.Length - 1, 1);
+                colParams = colParams.Remove(colParams.Length - 1, 1);
+                var sql = $"insert into Customer({colNames}) values( {colParams} ) ";
+                var rowAffects = dbConnection.Execute(sql, param: parameters);
+                var response = StatusCode(201, rowAffects);
+                return response;
             }
-
-            colNames = colNames.Remove(colNames.Length - 1, 1);
-            colParams = colParams.Remove(colParams.Length - 1, 1);
-
-            var sql = $"insert into Customer({colNames}) values( {colParams} ) ";
-
-            var rowAffects = dbConnection.Execute(sql, param: parameters);
-
-            var response = StatusCode(200, rowAffects);
-            return response;
+            catch (Exception ex)
+            {
+                // lỗi trùng mã khách hàng (khi exception trả về chứa Duplicate)
+                if (ex.Message.Contains("Duplicate"))
+                {
+                    var errorObj = new
+                    {
+                        devMsg = ex.Message,
+                        userMsg = Properties.ResourceVN.MISA_Error_User_DuplicateField
+                    };
+                    return StatusCode(400, errorObj);
+                }
+                else
+                {
+                    var errorObj = new
+                    {
+                        devMsg = ex.Message,
+                        userMsg = Properties.ResourceVN.MISA_Error
+                    };
+                    return StatusCode(500, errorObj);
+                }
+            }
         }
 
+        #endregion
+
+        #region Cập nhật một khách hàng có id được chọn
 
         /// <summary>
         /// Cập nhật một khách hàng với CustomerId trước
         /// </summary>
-        /// <param name="id"> lấy từ route</param>
+        /// <param name="CustomerIdStr"> lấy từ route</param>
         /// <param name="customer"> lấy từ body</param>
         /// <returns>1 nếu sửa thành công và 0 là ngược lại</returns>
-        [HttpPut("{id}")]
-        public IActionResult Put([FromRoute] string id, [FromBody] Customer customer)
+        [HttpPut("{CustomerIdStr}")]
+        public IActionResult Put([FromRoute] string CustomerIdStr, [FromBody] Customer customer)
         {
-            /// complete sql String
-            var cols = string.Empty;
-            // đọc từng property
-            var properties = customer.GetType().GetProperties();
 
-            DynamicParameters parameters = new DynamicParameters();
-            // duyệt từng property
-
-            foreach (var prop in properties)
+            try
             {
-                // lấy tên prop
-                var propName = prop.Name;
+                Guid CustomerId;
+                // kiểm tra xem id truyền lên có đúng là guid hay chưa
+                try
+                {
+                    CustomerId = Guid.Parse(CustomerIdStr);
+                }
+                catch (Exception ex)
+                {
+                    var errorObj = new
+                    {
+                        devMsg = ex.Message,
+                        userMsg = Properties.ResourceVN.MISA_Error,
+                    };
+                    return StatusCode(400, errorObj);
+                }
+
+                // Kiểm tra mã nhân viên
+                if (customer.CustomerCode == "" || customer.CustomerCode == null)
+                {
+                    var errorObj = new
+                    {
+                        devMsg = Properties.ResourceVN.MISA_Error_Dev_NullField,
+                        userMsg = Properties.ResourceVN.MISA_Error_User_NullField
+                    };
+                    return StatusCode(400, errorObj);
+                }
+
+                // kiểm tra email
+                if (
+                    !Regex.IsMatch(customer.Email, @"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$")
+                    )
+                {
+                    var errorObj = new
+                    {
+                        devMsg = Properties.ResourceVN.MISA_Error_Dev_InvalidField,
+                        userMsg = Properties.ResourceVN.MISA_Error_User_InvalidField
+                    };
+                    return StatusCode(400, errorObj);
+                }
 
 
-                // lấy value prop
-                var propValue = prop.GetValue(customer);
+                /// complete sql String
+                var cols = string.Empty;
+                // đọc từng property
+                var properties = customer.GetType().GetProperties();
+                DynamicParameters parameters = new DynamicParameters();
+                // duyệt từng property
 
-                // lấy kiểu prop
-                var propType = prop.PropertyType;
+                foreach (var prop in properties)
+                {
+                    // lấy tên prop
+                    var propName = prop.Name;
+                    // lấy value prop
+                    var propValue = prop.GetValue(customer);
+                    // lấy kiểu prop
+                    var propType = prop.PropertyType;
 
-                parameters.Add($"@{propName}", propValue);
-
-                cols += $" { propName } = @{propName},";
-
+                    parameters.Add($"@{propName}", propValue);
+                    cols += $" { propName } = @{propName},";
+                }
+                cols = cols.Remove(cols.Length - 1, 1);
+                var sql = $"update Customer set {cols} where CustomerId = {CustomerId}";
+                var rowAffects = dbConnection.Execute(sql, param: parameters);
+                var response = StatusCode(200, rowAffects);
+                return response;
             }
-            cols = cols.Remove(cols.Length - 1, 1);
-            var sql = $"update Customers set {cols} where CustomerId = {id}";
-            var rowAffects = dbConnection.Execute(sql, param: parameters);
-
-            var response = StatusCode(200, rowAffects);
-            return response;
+            catch (Exception ex)
+            {
+                // lỗi trùng mã khách hàng (khi exception trả về chứa Duplicate)
+                if (ex.Message.Contains("Duplicate"))
+                {
+                    var errorObj = new
+                    {
+                        devMsg = ex.Message,
+                        userMsg = Properties.ResourceVN.MISA_Error_User_DuplicateField
+                    };
+                    return StatusCode(400, errorObj);
+                }
+                else
+                {
+                    var errorObj = new
+                    {
+                        devMsg = ex.Message,
+                        userMsg = Properties.ResourceVN.MISA_Error
+                    };
+                    return StatusCode(500, errorObj);
+                }
+            }
         }
+
+        #endregion
+
+        #region Xóa một khách hàng theo id
 
         /// <summary>
         /// Xóa một khách hàng theo CustomerId
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="CustomerIdStr"></param>
         /// <returns>1 nếu xóa thành công và 0 là ngược lại</returns>
-        [HttpDelete("{id}")]
-        public IActionResult Delete(string id)
+        [HttpDelete("{CustomerIdStr}")]
+        public IActionResult Delete(string CustomerIdStr)
         {
-            var sql = $"delete from Customers where CustomerId = {id}";
-            var rowAffects = dbConnection.Execute(sql);
-            var response = StatusCode(200, rowAffects);
-            return response;
+
+            try
+            {
+                Guid CustomerId;
+                // kiểm tra xem id truyền lên có đúng là guid hay chưa
+                try
+                {
+                    CustomerId = Guid.Parse(CustomerIdStr);
+                }
+                catch (Exception ex)
+                {
+                    var errorObj = new
+                    {
+                        devMsg = ex.Message,
+                        userMsg = Properties.ResourceVN.MISA_Error,
+                    };
+                    return StatusCode(400, errorObj);
+                }
+
+                var sql = $"delete from Customer where CustomerId = {CustomerId}";
+                var rowAffects = dbConnection.Execute(sql);
+                var response = StatusCode(200, rowAffects);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                var errorObj = new
+                {
+                    devMsg = ex.Message,
+                    userMsg = Properties.ResourceVN.MISA_Error
+                };
+                return StatusCode(500, errorObj);
+            }
         }
+
+        #endregion
+
     }
 }

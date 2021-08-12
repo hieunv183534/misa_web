@@ -129,7 +129,7 @@
   <data name="MISA.Error.Dev.NullField" xml:space="preserve">
     <value>Thông tin quan trọng phải check xem null hay không đã chứ</value>
   </data>
-  <data name="MISA.Error.User.DuplicateFiled" xml:space="preserve">
+  <data name="MISA.Error.User.DuplicateField" xml:space="preserve">
     <value>Mã Entity của bạn bị trùng rồi thì phải</value>
   </data>
   <data name="MISA.Error.User.InvalidField" xml:space="preserve">
