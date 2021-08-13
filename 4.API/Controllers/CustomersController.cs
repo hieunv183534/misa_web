@@ -13,8 +13,8 @@ using System.Threading.Tasks;
 namespace MISA.CukCuk.api.Controllers
 {
     /// <summary>
-    /// api danh mục nhân viên
-    /// Author hieunv 03/08/2021
+    /// api danh mục khách hàng
+    /// Author hieunv 12/08/2021
     /// </summary>
     [Route("api/v1/[controller]")]
     [ApiController]

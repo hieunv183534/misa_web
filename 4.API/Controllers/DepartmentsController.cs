@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Dapper;
+using Microsoft.AspNetCore.Mvc;
+using MISA.CukCuk.api.Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,40 +11,51 @@ using System.Threading.Tasks;
 
 namespace MISA.CukCuk.api.Controllers
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// Api danh mục phòng ban
+    /// Author hieunv 12/08/2021
+    /// </summary>
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class DepartmentsController : ControllerBase
     {
-        // GET: api/<DepartmentsController>
+        IDbConnection dbConnection = DatabaseConnection.DbConnection;
+
+        #region Lấy toàn bộ danh sách phòng ban
+
+        /// <summary>
+        /// Lấy toàn bộ danh sách phòng ban
+        /// </summary>
+        /// <returns>Danh sách phòng ban</returns>
+        /// Author hieunv 12/08/2021
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IActionResult GetAll()
         {
-            return new string[] { "value1", "value2" };
+            try
+            {
+                var sql = "select * from Department";
+                var departments = dbConnection.Query<Department>(sql);
+                if (departments.Count() > 0)
+                {
+                    return StatusCode(200, departments);
+                }
+                else
+                {
+                    return StatusCode(204, departments);
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorObj = new
+                {
+                    devMsg = ex.Message,
+                    userMsg = Properties.ResourceVN.MISA_Error,
+                };
+                return StatusCode(500, errorObj);
+
+            }
         }
 
-        // GET api/<DepartmentsController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<DepartmentsController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<DepartmentsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<DepartmentsController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        #endregion
     }
 }

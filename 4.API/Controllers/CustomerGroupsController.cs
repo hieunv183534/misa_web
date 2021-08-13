@@ -8,7 +8,11 @@ using System.Threading.Tasks;
 
 namespace MISA.CukCuk.api.Controllers
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// Api danh mục nhóm khách hàng
+    /// Author hieunv 12/08/2021
+    /// </summary>
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class CustomerGroupsController : ControllerBase
     {

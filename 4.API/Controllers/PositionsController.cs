@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Dapper;
+using Microsoft.AspNetCore.Mvc;
+using MISA.CukCuk.api.Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,40 +11,52 @@ using System.Threading.Tasks;
 
 namespace MISA.CukCuk.api.Controllers
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// Api danh mục vi trí công việc
+    /// Author hieunv 12/08/2021
+    /// </summary>
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class PositionsController : ControllerBase
     {
-        // GET: api/<PositionsController>
+        IDbConnection dbConnection = DatabaseConnection.DbConnection;
+
+        #region Lấy toàn bộ ds các vị trí công việc
+
+        /// <summary>
+        /// Lấy toàn bộ danh sách vi trí
+        /// </summary>
+        /// <returns>Danh sách vi trí</returns>
+        /// Author hieunv 12/08/2021
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IActionResult GetAll()
         {
-            return new string[] { "value1", "value2" };
+            try
+            {
+                var sql = "select * from Position";
+                var positions = dbConnection.Query<Position>(sql);
+                if (positions.Count() > 0)
+                {
+                    return StatusCode(200, positions);
+                }
+                else
+                {
+                    return StatusCode(204, positions);
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorObj = new
+                {
+                    devMsg = ex.Message,
+                    userMsg = Properties.ResourceVN.MISA_Error,
+                };
+                return StatusCode(500, errorObj);
+
+            }
         }
 
-        // GET api/<PositionsController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
+        #endregion
 
-        // POST api/<PositionsController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<PositionsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<PositionsController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }
