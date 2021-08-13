@@ -106,6 +106,91 @@ namespace MISA.CukCuk.api.Controllers
 
         #endregion
 
+        #region Lấy thông tin ds khách hàng theo những tiêu chí
+        /// <summary>
+        /// Lấy ds khách hàng theo các tiêu chí và phân trang
+        /// </summary>
+        /// <param name="pageSize">số bản ghi / trang</param>
+        /// <param name="pageNumber">chỉ số trang</param>
+        /// <param name="CustomerGroupIdSttr">id vị trí dang string</param>
+        /// <param name="searchTerms"></param>
+        /// <returns>trả về status code và dữ liệu tương ứng các th xảy ra</returns>
+        [HttpGet("Fitler")]
+        public IActionResult GetFitler([FromQuery] int pageSize, [FromQuery] int pageNumber,
+            [FromQuery] string CustomerGroupIdSttr, [FromQuery] string searchTerms)
+        {
+
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                var sql = $"select * from Customer where ";
+                Guid? CustomerGroupId = null;
+                // kiểm tra xem CustomerGroupId truyền lên có đúng là guid hay chưa, nếu null thì tức ko nhận từ query-> bỏ qua
+                try
+                {
+                    if (CustomerGroupIdSttr != null)
+                    {
+                        CustomerGroupId = Guid.Parse(CustomerGroupIdSttr);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    var errorObj = new
+                    {
+                        devMsg = ex.Message,
+                        userMsg = Properties.ResourceVN.MISA_Error,
+                    };
+                    return StatusCode(400, errorObj);
+                }
+                
+                // nếu có search thì thêm điều kiệu sql là hoặc fullname, hoặc mã khách hàng, hoặc số điện thoại
+                if(searchTerms != null || searchTerms !="")
+                {
+                    parameters.Add($"@FullName", searchTerms);
+                    parameters.Add($"@CustomerCode", searchTerms);
+                    parameters.Add($"@PhoneNumber", searchTerms);
+                    sql += $"( FullName = @FullName or CustomerCode=@CustomerCode or PhoneNumber=@PhoneNumber ) ";
+                }
+
+                // nếu CustomerGroupId được nhận và là 1 guid thì thêm điều kiện and CustomerGroupId = @CustomerGroupId
+                if (CustomerGroupId != null)
+                {
+                    parameters.Add($"@CustomerGroupId", CustomerGroupId);
+                    sql += $" and CustomerGroupId = @CustomerGroupId ";
+                }
+
+                // Xử lsi điều kiện limit, offset
+                var limit = pageSize;
+                var offset = (pageNumber - 1) * pageSize;
+                parameters.Add($"@limit", limit);
+                parameters.Add($"@offset", offset);
+                sql += $" limit = @limit offset = @offset ";
+
+                // thực hiện truy vấn
+                var customers = dbConnection.Query<Customer>(sql,param: parameters);
+                if (customers.Count() > 0)
+                {
+                    return StatusCode(200, customers);
+                }
+                else
+                {
+                    return StatusCode(204, customers);
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorObj = new
+                {
+                    devMsg = ex.Message,
+                    userMsg = Properties.ResourceVN.MISA_Error,
+                };
+                return StatusCode(500, errorObj);
+            }
+            
+        }
+
+        #endregion
+
         #region Thêm mới một khách hàng
 
         /// <summary>
