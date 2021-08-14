@@ -125,7 +125,8 @@ namespace MISA.CukCuk.api.Controllers
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
-                var sql = $"select * from Employee where ";
+                var sql = $"select * from Employee";
+                var sqlCondition = $" where 1=1";
                 Guid? PositionId = null;
                 Guid? DepartmentId = null;
                 // kiểm tra xem PositionId, DepartmentId truyền lên có đúng là guid hay chưa, nếu null thì tức ko nhận từ query-> bỏ qua
@@ -151,43 +152,54 @@ namespace MISA.CukCuk.api.Controllers
                 }
 
                 // nếu có search thì thêm điều kiệu sql là hoặc fullname, hoặc mã nhân viên, hoặc số điện thoại
-                if (searchTerms != null || searchTerms != "")
+                if (searchTerms != null && searchTerms != "")
                 {
                     parameters.Add($"@FullName", searchTerms);
                     parameters.Add($"@EmployeeCode", searchTerms);
                     parameters.Add($"@PhoneNumber", searchTerms);
-                    sql += $"( FullName = @FullName or EmployeeCode=@EmployeeCode or PhoneNumber=@PhoneNumber ) ";
+                    sqlCondition += $" and ( FullName = @FullName or EmployeeCode=@EmployeeCode or PhoneNumber=@PhoneNumber ) ";
                 }
 
                 // nếu positionId được nhận và là 1 guid thì thêm điều kiện and positionId = @positionId
                 if (PositionId != null)
                 {
                     parameters.Add($"@PositionId", PositionId);
-                    sql += $" and PositionId = @PositionId ";
+                    sqlCondition += $" and PositionId = @PositionId ";
                 }
                 // nếu departmentId được nhận và là 1 guid thì thêm điều kiện and departmentId = @departmentId
                 if (DepartmentId != null)
                 {
                     parameters.Add($"@DepartmentId", DepartmentId);
-                    sql += $" and DepartmentId = @DepartmentId ";
+                    sqlCondition += $" and DepartmentId = @DepartmentId ";
                 }
+
+                // lấy tổng số bản ghi 
+                var sqlCount = $"select count(EmployeeId) as TotalRecord from Employee " + sqlCondition;
+                var TotalRecord = dbConnection.QueryFirstOrDefault(sqlCount, param: parameters).TotalRecord;
 
                 // Xử lí điều kiện limit, offset
                 var limit = pageSize;
                 var offset = (pageNumber - 1) * pageSize;
                 parameters.Add($"@limit", limit);
                 parameters.Add($"@offset", offset);
-                sql += $" limit = @limit offset = @offset ";
+                sql += sqlCondition;
+                sql += $" limit @offset,@limit ";
 
                 // thực hiện truy vấn
                 var employees = dbConnection.Query<Employee>(sql, param: parameters);
+
                 if (employees.Count() > 0)
                 {
-                    return StatusCode(200, employees);
+                    var response = new
+                    {
+                        TotalRecord = TotalRecord,
+                        Data = employees
+                    };
+                    return StatusCode(200, response);
                 }
                 else
                 {
-                    return StatusCode(204, employees);
+                    return StatusCode(204);
                 }
             }
             catch (Exception ex)

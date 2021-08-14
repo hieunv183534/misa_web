@@ -1,0 +1,15 @@
+C:\Users\Admin\Desktop\MISA\misa_web\5.ARCHITECTURE\MISA.CukCuk.Api\MISA.CukCuk.Infrastructure\bin\Debug\net5.0\MISA.CukCuk.Infrastructure.deps.json
+C:\Users\Admin\Desktop\MISA\misa_web\5.ARCHITECTURE\MISA.CukCuk.Api\MISA.CukCuk.Infrastructure\bin\Debug\net5.0\MISA.CukCuk.Infrastructure.dll
+C:\Users\Admin\Desktop\MISA\misa_web\5.ARCHITECTURE\MISA.CukCuk.Api\MISA.CukCuk.Infrastructure\bin\Debug\net5.0\ref\MISA.CukCuk.Infrastructure.dll
+C:\Users\Admin\Desktop\MISA\misa_web\5.ARCHITECTURE\MISA.CukCuk.Api\MISA.CukCuk.Infrastructure\bin\Debug\net5.0\MISA.CukCuk.Infrastructure.pdb
+C:\Users\Admin\Desktop\MISA\misa_web\5.ARCHITECTURE\MISA.CukCuk.Api\MISA.CukCuk.Infrastructure\bin\Debug\net5.0\MISA.CukCuk.Core.dll
+C:\Users\Admin\Desktop\MISA\misa_web\5.ARCHITECTURE\MISA.CukCuk.Api\MISA.CukCuk.Infrastructure\bin\Debug\net5.0\MISA.CukCuk.Core.pdb
+C:\Users\Admin\Desktop\MISA\misa_web\5.ARCHITECTURE\MISA.CukCuk.Api\MISA.CukCuk.Infrastructure\obj\Debug\net5.0\MISA.CukCuk.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\Admin\Desktop\MISA\misa_web\5.ARCHITECTURE\MISA.CukCuk.Api\MISA.CukCuk.Infrastructure\obj\Debug\net5.0\MISA.CukCuk.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Admin\Desktop\MISA\misa_web\5.ARCHITECTURE\MISA.CukCuk.Api\MISA.CukCuk.Infrastructure\obj\Debug\net5.0\MISA.CukCuk.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\Admin\Desktop\MISA\misa_web\5.ARCHITECTURE\MISA.CukCuk.Api\MISA.CukCuk.Infrastructure\obj\Debug\net5.0\MISA.CukCuk.Infrastructure.AssemblyInfo.cs
+C:\Users\Admin\Desktop\MISA\misa_web\5.ARCHITECTURE\MISA.CukCuk.Api\MISA.CukCuk.Infrastructure\obj\Debug\net5.0\MISA.CukCuk.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\Admin\Desktop\MISA\misa_web\5.ARCHITECTURE\MISA.CukCuk.Api\MISA.CukCuk.Infrastructure\obj\Debug\net5.0\MISA.CukCuk.Infrastructure.csproj.CopyComplete
+C:\Users\Admin\Desktop\MISA\misa_web\5.ARCHITECTURE\MISA.CukCuk.Api\MISA.CukCuk.Infrastructure\obj\Debug\net5.0\MISA.CukCuk.Infrastructure.dll
+C:\Users\Admin\Desktop\MISA\misa_web\5.ARCHITECTURE\MISA.CukCuk.Api\MISA.CukCuk.Infrastructure\obj\Debug\net5.0\ref\MISA.CukCuk.Infrastructure.dll
+C:\Users\Admin\Desktop\MISA\misa_web\5.ARCHITECTURE\MISA.CukCuk.Api\MISA.CukCuk.Infrastructure\obj\Debug\net5.0\MISA.CukCuk.Infrastructure.pdb

@@ -123,7 +123,8 @@ namespace MISA.CukCuk.api.Controllers
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
-                var sql = $"select * from Customer where ";
+                var sql = $"select * from Customer ";
+                var sqlCondition = $"where 1=1 ";
                 Guid? CustomerGroupId = null;
                 // kiểm tra xem CustomerGroupId truyền lên có đúng là guid hay chưa, nếu null thì tức ko nhận từ query-> bỏ qua
                 try
@@ -144,37 +145,48 @@ namespace MISA.CukCuk.api.Controllers
                 }
                 
                 // nếu có search thì thêm điều kiệu sql là hoặc fullname, hoặc mã khách hàng, hoặc số điện thoại
-                if(searchTerms != null || searchTerms !="")
+                if(searchTerms != null && searchTerms !="")
                 {
                     parameters.Add($"@FullName", searchTerms);
                     parameters.Add($"@CustomerCode", searchTerms);
                     parameters.Add($"@PhoneNumber", searchTerms);
-                    sql += $"( FullName = @FullName or CustomerCode=@CustomerCode or PhoneNumber=@PhoneNumber ) ";
+                    sqlCondition += $" and ( FullName = @FullName or CustomerCode=@CustomerCode or PhoneNumber=@PhoneNumber ) ";
                 }
 
                 // nếu CustomerGroupId được nhận và là 1 guid thì thêm điều kiện and CustomerGroupId = @CustomerGroupId
                 if (CustomerGroupId != null)
                 {
                     parameters.Add($"@CustomerGroupId", CustomerGroupId);
-                    sql += $" and CustomerGroupId = @CustomerGroupId ";
+                    sqlCondition += $" and CustomerGroupId = @CustomerGroupId ";
                 }
+
+                // lấy tổng số bản ghi 
+                var sqlCount = $"select count(CustomerId) as TotalRecord from Customer " + sqlCondition;
+                var TotalRecord = dbConnection.QueryFirstOrDefault(sqlCount, param: parameters).TotalRecord;
 
                 // Xử lsi điều kiện limit, offset
                 var limit = pageSize;
                 var offset = (pageNumber - 1) * pageSize;
                 parameters.Add($"@limit", limit);
                 parameters.Add($"@offset", offset);
-                sql += $" limit = @limit offset = @offset ";
+                sql += sqlCondition;
+                sql += $" limit @offset, @limit ";
 
                 // thực hiện truy vấn
                 var customers = dbConnection.Query<Customer>(sql,param: parameters);
+
                 if (customers.Count() > 0)
                 {
-                    return StatusCode(200, customers);
+                    var response = new
+                    {
+                        TotalRecord = TotalRecord,
+                        Data = customers
+                    };
+                    return StatusCode(200, response);
                 }
                 else
                 {
-                    return StatusCode(204, customers);
+                    return StatusCode(204);
                 }
             }
             catch (Exception ex)
