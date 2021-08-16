@@ -10,64 +10,79 @@ using System.Threading.Tasks;
 
 namespace MISA.CukCuk.Core.Services
 {
-    public class CustomerService : ICustomerService
+    public class CustomerService : BaseService<Customer>, ICustomerService
     {
         ICustomerRepository _customerRepository;
-        ServiceResult _serviceResult;
 
-
-        public CustomerService(ICustomerRepository customerRepository)
+        public CustomerService(ICustomerRepository customerRepository, IBaseRepository<Customer> baseRepository) :base(baseRepository)
         {
             _customerRepository = customerRepository;
         }
 
-
-        public CustomerService()
+        /// <summary>
+        /// Xử lí nghiệp vụ cho chức năng tìm kiếm theo tiêu chí và phân trang cho ds khách hàng
+        /// </summary>
+        /// <param name="pageSize"></param>
+        /// <param name="pageNumber"></param>
+        /// <param name="customerGroupId"></param>
+        /// <param name="searchTerms"></param>
+        /// <returns></returns>
+        public ServiceResult GetFilter(int pageSize, int pageNumber, Guid? customerGroupId, string searchTerms)
         {
-            _serviceResult = new ServiceResult();
-        }
-
-        public ServiceResult Get()
-        {
-            // xử lí nghiệp vụ
-
-            //tương tác với database
-            _serviceResult.Data = _customerRepository.Get();
-            if (_customerRepository.Get().Count() > 0)
+            try
             {
-                _serviceResult.StatusCode = 200;
+                //Xử lí nghiệp vụ
+                //Lấy dữ liệu từ db
+                PagingResult<Customer> pagingResult = _customerRepository.GetFilter(pageSize, pageNumber, customerGroupId, searchTerms);
+                if (pagingResult.Data.Count() > 0)
+                {
+                    _serviceResult.Data = pagingResult;
+                    _serviceResult.StatusCode = 200;
+                    return _serviceResult;
+                }
+                else
+                {
+                    _serviceResult.StatusCode = 204;
+                    return _serviceResult;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                _serviceResult.StatusCode = 204;
+                var errorObj = new
+                {
+                    devMsg = ex.Message,
+                    userMsg = Resources.ResourceVN.MISA_Error_User,
+                };
+                _serviceResult.Data = errorObj;
+                _serviceResult.StatusCode = 500;
+                return _serviceResult;
+            }
+        }
+
+        /// <summary>
+        /// Ghi đè Add của base để thêm chức năng validate
+        /// </summary>
+        /// <param name="customer"></param>
+        /// <returns></returns>
+        public override ServiceResult Add(Customer customer)
+        {
+            // validate dữ liệu
+
+            // kiểm tra email
+            if (!Common.IsValidEmail(customer.Email))
+            {
+                var errorObj = new
+                {
+                    devMsg = Resources.ResourceVN.MISA_Error_Dev_InvalidField,
+                    userMsg = Resources.ResourceVN.MISA_Error_User_InvalidField
+                };
+
+                _serviceResult.Data = errorObj;
+                _serviceResult.StatusCode = 400;
+                return _serviceResult;
             }
 
-            return _serviceResult;
-        }
-
-        public ServiceResult Delete(string customerIdStr)
-        {
-            // xử lí nghiệp vụ
-
-            //tương tác với database
-
-            throw new NotImplementedException();
-        }
-
-        public ServiceResult GetById(string customerIdStr)
-        {
-            // xử lí nghiệp vụ
-
-            //tương tác với database
-
-            throw new NotImplementedException();
-        }
-
-        public ServiceResult Post(Customer customer)
-        {
-            /// xử lí nghiệp vụ
-
-            // Kiểm tra mã khách hàng
+            // kiểm tra mã khách hàng có null hoặc rỗng
             if (customer.CustomerCode == "" || customer.CustomerCode == null)
             {
                 var errorObj = new
@@ -75,52 +90,80 @@ namespace MISA.CukCuk.Core.Services
                     devMsg = Resources.ResourceVN.MISA_Error_Dev_NullField,
                     userMsg = Resources.ResourceVN.MISA_Error_User_NullField
                 };
-                _serviceResult.IsValid = false;
-                _serviceResult.Data = errorObj;
-                _serviceResult.StatusCode = 400;
-                return _serviceResult;
-            }
-
-            // kiểm tra email
-            if (
-                !Regex.IsMatch(customer.Email, @"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$")
-                )
-            {
-                var errorObj = new
-                {
-                    devMsg =  Resources.ResourceVN.MISA_Error_Dev_InvalidField,
-                    userMsg = Resources.ResourceVN.MISA_Error_User_InvalidField
-                };
-                _serviceResult.IsValid = false;
                 _serviceResult.Data = errorObj;
                 _serviceResult.StatusCode = 400;
                 return _serviceResult;
             }
 
             // kiểm tra mã khách hàng có bị trùng không
-
-            ///tương tác với database qua ICustomerRepository
-            _serviceResult.Data = _customerRepository.Post(customer);
-            if((int)_serviceResult.Data == 1)
+            var customerByCode = _customerRepository.GetByCustomerCode(customer.CustomerCode);
+            if(customerByCode != null)
             {
-                _serviceResult.StatusCode = 201;
+                var errorObj = new
+                {
+                    devMsg = Resources.ResourceVN.MISA_Error_Dev_DuplicateFiled,
+                    userMsg = Resources.ResourceVN.MISA_Error_User_DuplicateField
+                };
+                _serviceResult.Data = errorObj;
+                _serviceResult.StatusCode = 400;
+                return _serviceResult;
             }
-            else
-            {
-                _serviceResult.StatusCode = 204;
-            }
-            _serviceResult.IsValid = true;
 
-            return _serviceResult;
+            return base.Add(customer);
         }
 
-        public ServiceResult Put(Customer customer, string customerIdStr)
+        /// <summary>
+        /// Ghi đè update của base để thực hiện chức năng validate
+        /// </summary>
+        /// <param name="customer"></param>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
+        public override ServiceResult Update(Customer customer, Guid customerId)
         {
-            // xử lí nghiệp vụ
+            //validate dữ liệu
 
-            //tương tác với database
+            // kiểm tra email
+            if (!Common.IsValidEmail(customer.Email))
+            {
+                var errorObj = new
+                {
+                    devMsg = Resources.ResourceVN.MISA_Error_Dev_InvalidField,
+                    userMsg = Resources.ResourceVN.MISA_Error_User_InvalidField
+                };
 
-            throw new NotImplementedException();
+                _serviceResult.Data = errorObj;
+                _serviceResult.StatusCode = 400;
+                return _serviceResult;
+            }
+
+            // kiểm tra mã khách hàng có null hoặc rỗng
+            if (customer.CustomerCode == "" || customer.CustomerCode == null)
+            {
+                var errorObj = new
+                {
+                    devMsg = Resources.ResourceVN.MISA_Error_Dev_NullField,
+                    userMsg = Resources.ResourceVN.MISA_Error_User_NullField
+                };
+                _serviceResult.Data = errorObj;
+                _serviceResult.StatusCode = 400;
+                return _serviceResult;
+            }
+
+            // kiểm tra mã khách hàng có bị trùng không
+            var customerByCode = _customerRepository.GetByCustomerCode(customer.CustomerCode);
+            if (customerByCode != null)
+            {
+                var errorObj = new
+                {
+                    devMsg = Resources.ResourceVN.MISA_Error_Dev_DuplicateFiled,
+                    userMsg = Resources.ResourceVN.MISA_Error_User_DuplicateField
+                };
+                _serviceResult.Data = errorObj;
+                _serviceResult.StatusCode = 400;
+                return _serviceResult;
+            }
+
+            return base.Update(customer, customerId);
         }
     }
 }

@@ -7,41 +7,23 @@ using System.Threading.Tasks;
 
 namespace MISA.CukCuk.Core.Interfaces.IRepository
 {
-    public interface ICustomerRepository
+    public interface ICustomerRepository : IBaseRepository<Customer>
     {
         /// <summary>
-        /// Truy vấn toàn bộ khách hàng
+        /// Lấy dữ liệu từ db phân trang và lọc tìm kiếm theo tiêu chí
         /// </summary>
+        /// <param name="pageSize"></param>
+        /// <param name="pageNumber"></param>
+        /// <param name="customerGroupId"></param>
+        /// <param name="searchTerms"></param>
         /// <returns></returns>
-        List<Customer> Get();
+        PagingResult<Customer> GetFilter(int pageSize, int pageNumber, Guid? customerGroupId, string searchTerms);
 
         /// <summary>
-        /// Truy vấn khách hàng theo id
+        /// Lấy ra nhân viên có mã nhân viên customerCode
         /// </summary>
-        /// <param name="customerId"></param>
+        /// <param name="customerCode"></param>
         /// <returns></returns>
-        Customer GetById(Guid customerId);
-
-        /// <summary>
-        /// Insert một khách hàng
-        /// </summary>
-        /// <param name="customer"></param>
-        /// <returns></returns>
-        int Post(Customer customer);
-
-        /// <summary>
-        /// update một khách hàng theo id
-        /// </summary>
-        /// <param name="customer"></param>
-        /// <param name="customerId"></param>
-        /// <returns></returns>
-        int Put(Customer customer, Guid customerId);
-
-        /// <summary>
-        /// Xóa một khách hàng theo id
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <returns></returns>
-        int Delete( Guid customerId);
+        Customer GetByCustomerCode(string customerCode);
     }
 }

@@ -36,8 +36,20 @@ namespace MISA.CukCuk.Api
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MISA.CukCuk.Api", Version = "v1" });
             });
 
+            services.AddControllers().AddJsonOptions(jsonOptions =>
+            {
+                jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null;
+            });
+
+            // tiêm base
+            services.AddScoped(typeof(IBaseRepository<>),typeof(BaseRepository<>));
+            services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
+            // tiêm customer
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
+            // tiêm employee
+            services.AddScoped<IEmployeeService, EmployeeService>();
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

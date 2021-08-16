@@ -9,85 +9,54 @@ using System.Threading.Tasks;
 
 namespace MISA.CukCuk.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CustomersController : ControllerBase
+   
+    public class CustomersController : BaseEntityController<Customer>
     {
         ICustomerService _customerService;
 
-
-        public CustomersController(ICustomerService customerService)
+        public CustomersController(IBaseService<Customer> baseService, ICustomerService customerService) :base(baseService)
         {
             _customerService = customerService;
         }
 
-
-        #region Lấy toàn bộ ds khách hàng
-
         /// <summary>
-        /// Lấy toàn bộ danh sách khách hàng
+        /// Api lọc nhân viên theo tiêu chí và phân trang
         /// </summary>
-        /// <returns>Danh sách khách hàng</returns>
-        /// Author hieunv 14/08/2021
-        [HttpGet]
-        public IActionResult GetAll()
+        /// <param name="pageSize"></param>
+        /// <param name="pageNumber"></param>
+        /// <param name="customerGroupId"></param>
+        /// <param name="searchTerms"></param>
+        /// <returns></returns>
+        [HttpGet("filter")]
+        public IActionResult GetFitler([FromQuery] int pageSize, [FromQuery] int pageNumber,
+            [FromQuery] Guid? customerGroupId, [FromQuery] string searchTerms)
         {
-            try
-            {
-                var serviceResult = _customerService.Get();
-                return StatusCode(serviceResult.StatusCode, serviceResult.Data);
-            }
-            catch (Exception ex)
-            {
-                var errorObj = new
-                {
-                    devMsg = ex.Message,
-                    userMsg = Core.Resources.ResourceVN.MISA_Error_User,
-                };
-                return StatusCode(500, errorObj);
-
-            }
+            var serviceResult = _customerService.GetFilter(pageSize, pageNumber, customerGroupId, searchTerms);
+            return StatusCode(serviceResult.StatusCode, serviceResult.Data);
         }
 
-        #endregion
-
-
-
-        #region Thêm mới một khách hàng
-
         /// <summary>
-        /// Thêm mới một khách hàng vào database
+        /// Ghi đè api post của base
         /// </summary>
         /// <param name="customer"></param>
-        /// <returns>số hàng được thêm thành công</returns>
-        /// Author hieunv 14/08/2021
-        [HttpPost]
-        public IActionResult Post([FromBody] Customer customer)
+        /// <returns></returns>
+        public override IActionResult Post([FromBody] Customer customer)
         {
-            try
-            {
-                var serviceResult = _customerService.Post(customer);
-
-                if (serviceResult.IsValid)
-                {
-                    return StatusCode(serviceResult.StatusCode, serviceResult.Data);
-                }
-                else
-                {
-                    return StatusCode(serviceResult.StatusCode, serviceResult.Data);
-                }
-            }
-            catch (Exception ex)
-            {
-                var errorObj = new
-                {
-                    devMsg = ex.Message,
-                    userMsg = Core.Resources.ResourceVN.MISA_Error_User
-                };
-                return StatusCode(500, errorObj);
-            }
+            var serviceResult = _customerService.Add(customer);
+            return StatusCode(serviceResult.StatusCode, serviceResult.Data);
         }
 
-        #endregion
+        /// <summary>
+        /// Ghi đè api put của base
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="customer"></param>
+        /// <returns></returns>
+        public override IActionResult Put([FromRoute] Guid customerId, [FromBody] Customer customer)
+        {
+            var serviceResult = _customerService.Update(customer, customerId);
+            return StatusCode(serviceResult.StatusCode, serviceResult.Data);
+        }
+
     }
 }

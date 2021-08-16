@@ -7,50 +7,16 @@ using System.Threading.Tasks;
 
 namespace MISA.CukCuk.Core.Interfaces.IServices
 {
-    public interface ICustomerService
+    public interface ICustomerService : IBaseService<Customer>
     {
-
-
         /// <summary>
-        /// Lấy toàn bộ ds khách hàng
+        /// Lấy danh sách dữ liệu phân trang và heo một số tiêu chí
         /// </summary>
-        /// <returns>ServiceResult</returns>
-        /// Author hieunv 14/08/2021
-        ServiceResult Get();
-
-        /// <summary>
-        /// Lấy thông tin khách hàng theo id
-        /// </summary>
-        /// <param name="customerIdStr">id của khách hàng cần get</param>
-        /// <returns>ServiceResult</returns>
-        /// Author hieunv 14/08/2021
-        ServiceResult GetById(string customerIdStr);
-
-        /// <summary>
-        /// Thêm mới khách hàng
-        /// </summary>
-        /// <param name="customer">Thông tin khách hàng</param>
-        /// <returns>ServiceResult</returns>
-        /// Author hieunv 14/08/2021
-        ServiceResult Post(Customer customer);
-
-        /// <summary>
-        /// cập nhật thông tin khách hàng
-        /// </summary>
-        /// <param name="customer">Thông tin khách hàng</param>
-        /// <param name="customerIdStr">id khách hàng câp nhật</param>
-        /// <returns>ServiceResult</returns>
-        /// Author hieunv14/08/2021
-        ServiceResult Put(Customer customer, string customerIdStr);
-
-        /// <summary>
-        /// Xóa một khách hàng theo id
-        /// </summary>
-        /// <param name="customerIdStr">id khách hàng cần xóa</param>
-        /// <returns>ServiceResult</returns>
-        /// Author hieunv 14/08/2021
-        ServiceResult Delete(string customerIdStr);
-
-
+        /// <param name="pageSize"></param>
+        /// <param name="pageNumber"></param>
+        /// <param name="customerGroupId"></param>
+        /// <param name="searchTerms"></param>
+        /// <returns></returns>
+        ServiceResult GetFilter(int pageSize, int pageNumber, Guid? customerGroupId, string searchTerms);
     }
 }

@@ -10,72 +10,56 @@ using System.Threading.Tasks;
 
 namespace MISA.CukCuk.Infrastructure.Repositiory
 {
-    public class CustomerRepository : ICustomerRepository
+    public class CustomerRepository : BaseRepository<Customer> ,ICustomerRepository
     {
 
-        IDbConnection dbConnection = DatabaseConnection.DbConnection;
-
-        public int Delete(Guid customerId)
+        public Customer GetByCustomerCode(string customerCode)
         {
-            throw new NotImplementedException();
-        }
-
-        public List<Customer> Get()
-        {
-            var sql = "select * from Customer";
-            var customers = dbConnection.Query<Customer>(sql);
-            return (List<Customer>)customers;
-        }
-
-        public Customer GetById(Guid customerId)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        /// <summary>
-        /// Thêm mưới khách hàng vào db
-        /// </summary>
-        /// <param name="customer"></param>
-        /// <returns></returns>
-        /// Author hieunv 14/08/2021
-        public int Post(Customer customer)
-        {
-            // thêm id của employee là new guid
-            customer.CustomerId = Guid.NewGuid();
-
-            /// complete sql String
-            var colNames = string.Empty;
-            var colParams = string.Empty;
-            // đọc từng property
-            var properties = customer.GetType().GetProperties();
-
             DynamicParameters parameters = new DynamicParameters();
-            // duyệt từng property
-
-            foreach (var prop in properties)
-            {
-                // lấy tên prop
-                var propName = prop.Name;
-                // lấy value prop
-                var propValue = prop.GetValue(customer);
-                // lấy kiểu prop
-                var propType = prop.PropertyType;
-
-                parameters.Add($"@{propName}", propValue);
-                colNames += $"{propName},";
-                colParams += $"@{propName},";
-            }
-            colNames = colNames.Remove(colNames.Length - 1, 1);
-            colParams = colParams.Remove(colParams.Length - 1, 1);
-            var sql = $"insert into Customer({colNames}) values( {colParams} ) ";
-            var rowAffects = dbConnection.Execute(sql, param: parameters);
-            return rowAffects;
+            parameters.Add("@CustomerCode", customerCode);
+            var sql = $"select * from Customer where CustomerCode = @CustomerCode";
+            Customer customer = dbConnection.QueryFirstOrDefault(sql, param: parameters);
+            return customer;
         }
 
-        public int Put(Customer customer, Guid customerId)
+        public PagingResult<Customer> GetFilter(int pageSize, int pageNumber, Guid? customerGroupId, string searchTerms)
         {
-            throw new NotImplementedException();
+            DynamicParameters parameters = new DynamicParameters();
+            var sql = $"select * from Customer ";
+            var sqlCondition = $"where 1=1 ";
+
+            // nếu có search thì thêm điều kiệu sql là hoặc fullname, hoặc mã khách hàng, hoặc số điện thoại
+            if (searchTerms != null && searchTerms != "")
+            {
+                parameters.Add($"@FullName", searchTerms);
+                parameters.Add($"@CustomerCode", searchTerms);
+                parameters.Add($"@PhoneNumber", searchTerms);
+                sqlCondition += $" and ( FullName = @FullName or CustomerCode=@CustomerCode or PhoneNumber=@PhoneNumber ) ";
+            }
+
+            // nếu CustomerGroupId được nhận và là 1 guid thì thêm điều kiện and CustomerGroupId = @CustomerGroupId
+            if (customerGroupId != null)
+            {
+                parameters.Add($"@CustomerGroupId", customerGroupId);
+                sqlCondition += $" and CustomerGroupId = @CustomerGroupId ";
+            }
+
+            // lấy tổng số bản ghi 
+            var sqlCount = $"select count(CustomerId) as TotalRecord from Customer " + sqlCondition;
+            int TotalRecord = (int)dbConnection.QueryFirstOrDefault(sqlCount, param: parameters).TotalRecord;
+
+            // Xử lsi điều kiện limit, offset
+            var limit = pageSize;
+            var offset = (pageNumber - 1) * pageSize;
+            parameters.Add($"@limit", limit);
+            parameters.Add($"@offset", offset);
+            sql += sqlCondition;
+            sql += $" limit @offset, @limit ";
+
+            // thực hiện truy vấn
+            var customers = dbConnection.Query<Customer>(sql, param: parameters);
+
+            return new PagingResult<Customer>(TotalRecord, (List<Customer>)customers);
         }
     }
 }
