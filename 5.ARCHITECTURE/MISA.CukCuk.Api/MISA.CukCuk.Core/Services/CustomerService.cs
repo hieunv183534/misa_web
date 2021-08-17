@@ -59,111 +59,111 @@ namespace MISA.CukCuk.Core.Services
             }
         }
 
-        /// <summary>
-        /// Ghi đè Add của base để thêm chức năng validate
-        /// </summary>
-        /// <param name="customer"></param>
-        /// <returns></returns>
-        public override ServiceResult Add(Customer customer)
-        {
-            // validate dữ liệu
+        ///// <summary>
+        ///// Ghi đè Add của base để thêm chức năng validate
+        ///// </summary>
+        ///// <param name="customer"></param>
+        ///// <returns></returns>
+        //public override ServiceResult Add(Customer customer)
+        //{
+        //    // validate dữ liệu
 
-            // kiểm tra email
-            if (!Common.IsValidEmail(customer.Email))
-            {
-                var errorObj = new
-                {
-                    devMsg = Resources.ResourceVN.MISA_Error_Dev_InvalidField,
-                    userMsg = Resources.ResourceVN.MISA_Error_User_InvalidField
-                };
+        //    // kiểm tra email
+        //    if (!Common.IsValidEmail(customer.Email))
+        //    {
+        //        var errorObj = new
+        //        {
+        //            devMsg = Resources.ResourceVN.MISA_Error_Dev_InvalidField,
+        //            userMsg = Resources.ResourceVN.MISA_Error_User_InvalidField
+        //        };
 
-                _serviceResult.Data = errorObj;
-                _serviceResult.StatusCode = 400;
-                return _serviceResult;
-            }
+        //        _serviceResult.Data = errorObj;
+        //        _serviceResult.StatusCode = 400;
+        //        return _serviceResult;
+        //    }
 
-            // kiểm tra mã khách hàng có null hoặc rỗng
-            if (customer.CustomerCode == "" || customer.CustomerCode == null)
-            {
-                var errorObj = new
-                {
-                    devMsg = Resources.ResourceVN.MISA_Error_Dev_NullField,
-                    userMsg = Resources.ResourceVN.MISA_Error_User_NullField
-                };
-                _serviceResult.Data = errorObj;
-                _serviceResult.StatusCode = 400;
-                return _serviceResult;
-            }
+        //    // kiểm tra mã khách hàng có null hoặc rỗng
+        //    if (customer.CustomerCode == "" || customer.CustomerCode == null)
+        //    {
+        //        var errorObj = new
+        //        {
+        //            devMsg = Resources.ResourceVN.MISA_Error_Dev_NullField,
+        //            userMsg = Resources.ResourceVN.MISA_Error_User_NullField
+        //        };
+        //        _serviceResult.Data = errorObj;
+        //        _serviceResult.StatusCode = 400;
+        //        return _serviceResult;
+        //    }
 
-            // kiểm tra mã khách hàng có bị trùng không
-            var customerByCode = _customerRepository.GetByCustomerCode(customer.CustomerCode);
-            if(customerByCode != null)
-            {
-                var errorObj = new
-                {
-                    devMsg = Resources.ResourceVN.MISA_Error_Dev_DuplicateFiled,
-                    userMsg = Resources.ResourceVN.MISA_Error_User_DuplicateField
-                };
-                _serviceResult.Data = errorObj;
-                _serviceResult.StatusCode = 400;
-                return _serviceResult;
-            }
+        //    // kiểm tra mã khách hàng có bị trùng không
+        //    var customerByCode = _customerRepository.GetByCustomerCode(customer.CustomerCode);
+        //    if(customerByCode != null)
+        //    {
+        //        var errorObj = new
+        //        {
+        //            devMsg = Resources.ResourceVN.MISA_Error_Dev_DuplicateFiled,
+        //            userMsg = Resources.ResourceVN.MISA_Error_User_DuplicateField
+        //        };
+        //        _serviceResult.Data = errorObj;
+        //        _serviceResult.StatusCode = 400;
+        //        return _serviceResult;
+        //    }
 
-            return base.Add(customer);
-        }
+        //    return base.Add(customer);
+        //}
 
-        /// <summary>
-        /// Ghi đè update của base để thực hiện chức năng validate
-        /// </summary>
-        /// <param name="customer"></param>
-        /// <param name="customerId"></param>
-        /// <returns></returns>
-        public override ServiceResult Update(Customer customer, Guid customerId)
-        {
-            //validate dữ liệu
+        ///// <summary>
+        ///// Ghi đè update của base để thực hiện chức năng validate
+        ///// </summary>
+        ///// <param name="customer"></param>
+        ///// <param name="customerId"></param>
+        ///// <returns></returns>
+        //public override ServiceResult Update(Customer customer, Guid customerId)
+        //{
+        //    //validate dữ liệu
 
-            // kiểm tra email
-            if (!Common.IsValidEmail(customer.Email))
-            {
-                var errorObj = new
-                {
-                    devMsg = Resources.ResourceVN.MISA_Error_Dev_InvalidField,
-                    userMsg = Resources.ResourceVN.MISA_Error_User_InvalidField
-                };
+        //    // kiểm tra email
+        //    if (!Common.IsValidEmail(customer.Email))
+        //    {
+        //        var errorObj = new
+        //        {
+        //            devMsg = Resources.ResourceVN.MISA_Error_Dev_InvalidField,
+        //            userMsg = Resources.ResourceVN.MISA_Error_User_InvalidField
+        //        };
 
-                _serviceResult.Data = errorObj;
-                _serviceResult.StatusCode = 400;
-                return _serviceResult;
-            }
+        //        _serviceResult.Data = errorObj;
+        //        _serviceResult.StatusCode = 400;
+        //        return _serviceResult;
+        //    }
 
-            // kiểm tra mã khách hàng có null hoặc rỗng
-            if (customer.CustomerCode == "" || customer.CustomerCode == null)
-            {
-                var errorObj = new
-                {
-                    devMsg = Resources.ResourceVN.MISA_Error_Dev_NullField,
-                    userMsg = Resources.ResourceVN.MISA_Error_User_NullField
-                };
-                _serviceResult.Data = errorObj;
-                _serviceResult.StatusCode = 400;
-                return _serviceResult;
-            }
+        //    // kiểm tra mã khách hàng có null hoặc rỗng
+        //    if (customer.CustomerCode == "" || customer.CustomerCode == null)
+        //    {
+        //        var errorObj = new
+        //        {
+        //            devMsg = Resources.ResourceVN.MISA_Error_Dev_NullField,
+        //            userMsg = Resources.ResourceVN.MISA_Error_User_NullField
+        //        };
+        //        _serviceResult.Data = errorObj;
+        //        _serviceResult.StatusCode = 400;
+        //        return _serviceResult;
+        //    }
 
-            // kiểm tra mã khách hàng có bị trùng không
-            var customerByCode = _customerRepository.GetByCustomerCode(customer.CustomerCode);
-            if (customerByCode != null)
-            {
-                var errorObj = new
-                {
-                    devMsg = Resources.ResourceVN.MISA_Error_Dev_DuplicateFiled,
-                    userMsg = Resources.ResourceVN.MISA_Error_User_DuplicateField
-                };
-                _serviceResult.Data = errorObj;
-                _serviceResult.StatusCode = 400;
-                return _serviceResult;
-            }
+        //    // kiểm tra mã khách hàng có bị trùng không
+        //    var customerByCode = _customerRepository.GetByCustomerCode(customer.CustomerCode);
+        //    if (customerByCode != null)
+        //    {
+        //        var errorObj = new
+        //        {
+        //            devMsg = Resources.ResourceVN.MISA_Error_Dev_DuplicateFiled,
+        //            userMsg = Resources.ResourceVN.MISA_Error_User_DuplicateField
+        //        };
+        //        _serviceResult.Data = errorObj;
+        //        _serviceResult.StatusCode = 400;
+        //        return _serviceResult;
+        //    }
 
-            return base.Update(customer, customerId);
-        }
+        //    return base.Update(customer, customerId);
+        //}
     }
 }

@@ -34,6 +34,38 @@ namespace MISA.CukCuk.Core.Services
             try
             {
                 // xử lí nghiệp vụ thêm
+                var isValidMode = Validate(entity, "add");
+
+                switch (isValidMode)
+                {
+                    case 1:
+                        _serviceResult.Data = new
+                        {
+                            devMsg = Resources.ResourceVN.MISA_Error_Dev_NullField,
+                            userMsg = Resources.ResourceVN.MISA_Error_User_NullField,
+                        };
+                        _serviceResult.StatusCode = 400;
+                        return _serviceResult;
+                    case 2:
+                        _serviceResult.Data = new
+                        {
+                            devMsg = Resources.ResourceVN.MISA_Error_Dev_DuplicateFiled,
+                            userMsg = Resources.ResourceVN.MISA_Error_User_DuplicateField,
+                        };
+                        _serviceResult.StatusCode = 400;
+                        return _serviceResult;
+                    case 3:
+                        _serviceResult.Data = new
+                        {
+                            devMsg = Resources.ResourceVN.MISA_Error_Dev_InvalidField,
+                            userMsg = Resources.ResourceVN.MISA_Error_User_InvalidField,
+                        };
+                        _serviceResult.StatusCode = 400;
+                        return _serviceResult;
+                    default:
+                        break;
+                }
+
                 // thêm dữ liệu vào db
                 var rowAffect = _baseRepository.Add(entity);
                 if (rowAffect > 0)
@@ -196,6 +228,40 @@ namespace MISA.CukCuk.Core.Services
             try
             {
                 // xử lí nghiệp vụ sửa
+
+                // xử lí nghiệp vụ thêm
+                var isValidMode = Validate(entity, "update");
+
+                switch (isValidMode)
+                {
+                    case 1:
+                        _serviceResult.Data = new
+                        {
+                            devMsg = Resources.ResourceVN.MISA_Error_Dev_NullField,
+                            userMsg = Resources.ResourceVN.MISA_Error_User_NullField,
+                        };
+                        _serviceResult.StatusCode = 400;
+                        return _serviceResult;
+                    case 2:
+                        _serviceResult.Data = new
+                        {
+                            devMsg = Resources.ResourceVN.MISA_Error_Dev_DuplicateFiled,
+                            userMsg = Resources.ResourceVN.MISA_Error_User_DuplicateField,
+                        };
+                        _serviceResult.StatusCode = 400;
+                        return _serviceResult;
+                    case 3:
+                        _serviceResult.Data = new
+                        {
+                            devMsg = Resources.ResourceVN.MISA_Error_Dev_InvalidField,
+                            userMsg = Resources.ResourceVN.MISA_Error_User_InvalidField,
+                        };
+                        _serviceResult.StatusCode = 400;
+                        return _serviceResult;
+                    default:
+                        break;
+                }
+
                 // cập nhật dữ liệu vào db
                 var rowAffect = _baseRepository.Update(entity, entityId);
                 if (rowAffect > 0)
@@ -224,6 +290,59 @@ namespace MISA.CukCuk.Core.Services
         }
 
         #endregion
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="mode"></param>
+        /// <returns>0: hợp lệ; 1:trống; 2: trùng; 3: sai định dạng</returns>
+        private int Validate(MISAEntity entity, string mode)
+        {
+            var props = entity.GetType().GetProperties();
+
+            foreach (var prop in props)
+            {
+                // kiểm tra trường bắt buộc nhập reqiued !!!! 1
+                if (prop.IsDefined(typeof(Requied), false))
+                {
+                    var propValue = prop.GetValue(entity);
+                    if ((propValue == null) ||((string)propValue == ""))
+                    {
+                        return 1;
+                    }
+                    // kiểm tra trường không cho phép trùng !!!! 2
+                }
+                if (prop.IsDefined(typeof(NotAllowDuplicate), false))
+                {
+                    var entityDuplicate = _baseRepository.GetByProp(prop.Name, prop.GetValue(entity));
+                    if (mode == "add" && entityDuplicate != null)
+                    {
+                        return 2;
+                    }
+                    else if (mode == "update")
+                    {
+                        if (
+                            entityDuplicate.GetType().GetProperty($"{typeof(MISAEntity).Name}Id").GetValue(entityDuplicate)
+                            != entity.GetType().GetProperty($"{typeof(MISAEntity).Name}Id").GetValue(entity)
+                            )
+                        {
+                            return 2;
+                        }
+                    }
+                    // kiểm tra email hợp lệ  !!!! 3
+                }
+                if (prop.Name == "Email")
+                {
+                    if (!Common.IsValidEmail((string)prop.GetValue(entity)))
+                    {
+                        return 3;
+                    }
+                }
+            }
+            return 0;
+        }
 
     }
 }

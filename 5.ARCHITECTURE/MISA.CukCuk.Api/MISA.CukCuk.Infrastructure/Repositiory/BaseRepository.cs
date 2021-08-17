@@ -105,6 +105,15 @@ namespace MISA.CukCuk.Infrastructure.Repositiory
             return entity;
         }
 
+        public MISAEntity GetByProp(string propName, object propValue)
+        {
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add($"@{propName}", propValue.ToString());
+            var sql = $"select * from {_tableName} where {propName}= @{propName} ";
+            var entity = dbConnection.QueryFirstOrDefault<MISAEntity>(sql, param: parameters);
+            return entity;
+        }
+
         /// <summary>----------------------------------------------------------------------------
         /// cập nhật một bản ghi với id
         /// </summary>

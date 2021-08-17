@@ -57,12 +57,15 @@ namespace MISA.CukCuk.Core.Entities
 
         #region Property
 
+        [PrimaryKey]
         public Guid CustomerId
         {
             get { return this.customerId; }
             set { this.customerId = value; }
         }
 
+        [Requied]
+        [NotAllowDuplicate]
         public string CustomerCode
         {
             get { return this.customerCode; }

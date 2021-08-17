@@ -35,28 +35,28 @@ namespace MISA.CukCuk.Api.Controllers
             return StatusCode(serviceResult.StatusCode, serviceResult.Data);
         }
 
-        /// <summary>
-        /// Ghi đè api post của base
-        /// </summary>
-        /// <param name="customer"></param>
-        /// <returns></returns>
-        public override IActionResult Post([FromBody] Customer customer)
-        {
-            var serviceResult = _customerService.Add(customer);
-            return StatusCode(serviceResult.StatusCode, serviceResult.Data);
-        }
+        ///// <summary>
+        ///// Ghi đè api post của base
+        ///// </summary>
+        ///// <param name="customer"></param>
+        ///// <returns></returns>
+        //public override IActionResult Post([FromBody] Customer customer)
+        //{
+        //    var serviceResult = _customerService.Add(customer);
+        //    return StatusCode(serviceResult.StatusCode, serviceResult.Data);
+        //}
 
-        /// <summary>
-        /// Ghi đè api put của base
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="customer"></param>
-        /// <returns></returns>
-        public override IActionResult Put([FromRoute] Guid customerId, [FromBody] Customer customer)
-        {
-            var serviceResult = _customerService.Update(customer, customerId);
-            return StatusCode(serviceResult.StatusCode, serviceResult.Data);
-        }
+        ///// <summary>
+        ///// Ghi đè api put của base
+        ///// </summary>
+        ///// <param name="customerId"></param>
+        ///// <param name="customer"></param>
+        ///// <returns></returns>
+        //public override IActionResult Put([FromRoute] Guid customerId, [FromBody] Customer customer)
+        //{
+        //    var serviceResult = _customerService.Update(customer, customerId);
+        //    return StatusCode(serviceResult.StatusCode, serviceResult.Data);
+        //}
 
     }
 }

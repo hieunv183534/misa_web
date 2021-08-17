@@ -79,6 +79,8 @@ namespace MISA.CukCuk.Core.Entities
         /// <summary>
         /// Id nhân viên
         /// </summary>
+        
+        [PrimaryKey]
         public Guid EmployeeId
         {
             get { return this.employeeId; }
@@ -88,6 +90,9 @@ namespace MISA.CukCuk.Core.Entities
         /// <summary>
         /// Mã nhân viên
         /// </summary>
+        
+        [NotAllowDuplicate]
+        [Requied]
         public string EmployeeCode
         {
             get { return this.employeeCode; }

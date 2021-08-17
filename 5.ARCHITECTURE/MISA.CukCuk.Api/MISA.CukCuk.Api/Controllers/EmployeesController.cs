@@ -27,16 +27,16 @@ namespace MISA.CukCuk.Api.Controllers
             return StatusCode(serviceResult.StatusCode, serviceResult.Data);
         }
 
-        public override IActionResult Post([FromBody] Employee employee)
-        {
-            var serviceResult = _employeeService.Add(employee);
-            return StatusCode(serviceResult.StatusCode, serviceResult.Data);
-        }
+        //public override IActionResult Post([FromBody] Employee employee)
+        //{
+        //    var serviceResult = _employeeService.Add(employee);
+        //    return StatusCode(serviceResult.StatusCode, serviceResult.Data);
+        //}
 
-        public override IActionResult Put([FromRoute] Guid employeeId, [FromBody] Employee employee)
-        {
-            var serviceResult = _employeeService.Update(employee, employeeId);
-            return StatusCode(serviceResult.StatusCode, serviceResult.Data);
-        }
+        //public override IActionResult Put([FromRoute] Guid employeeId, [FromBody] Employee employee)
+        //{
+        //    var serviceResult = _employeeService.Update(employee, employeeId);
+        //    return StatusCode(serviceResult.StatusCode, serviceResult.Data);
+        //}
     }
 }

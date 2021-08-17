@@ -42,5 +42,13 @@ namespace MISA.CukCuk.Core.Interfaces.IRepository
         /// <param name="entityId"></param>
         /// <returns></returns>
         int Delete(Guid entityId);
+
+        /// <summary>
+        /// Lấy theo một prop
+        /// </summary>
+        /// <param name="propName"></param>
+        /// <param name="propValue"></param>
+        /// <returns></returns>
+        MISAEntity GetByProp(string propName, object propValue);
     }
 }
