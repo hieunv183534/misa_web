@@ -19,11 +19,5 @@ namespace MISA.CukCuk.Core.Interfaces.IRepository
         /// <returns></returns>
         PagingResult<Customer> GetFilter(int pageSize, int pageNumber, Guid? customerGroupId, string searchTerms);
 
-        /// <summary>
-        /// Lấy ra nhân viên có mã nhân viên customerCode
-        /// </summary>
-        /// <param name="customerCode"></param>
-        /// <returns></returns>
-        Customer GetByCustomerCode(string customerCode);
     }
 }

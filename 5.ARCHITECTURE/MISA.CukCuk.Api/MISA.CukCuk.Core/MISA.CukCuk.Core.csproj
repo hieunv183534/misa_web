@@ -9,6 +9,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="EPPlus" Version="5.7.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Resources\ResourceVN.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

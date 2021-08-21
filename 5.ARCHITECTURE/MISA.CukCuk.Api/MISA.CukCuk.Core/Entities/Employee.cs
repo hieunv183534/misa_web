@@ -23,7 +23,9 @@ namespace MISA.CukCuk.Core.Entities
         private Guid? positionId;
         private int? workStatus;
         private string personalTaxCode;
-        private decimal? salary;
+        private double? salary;
+        private string positionName;
+        private string departmentName;
 
 
 
@@ -50,7 +52,7 @@ namespace MISA.CukCuk.Core.Entities
         public Employee(string employeeCode, string firstName, string lastName, string fullName, int? gender,
             DateTime? dateOfBirth, string phoneNumber, string email, string address, string identityNumber,
             DateTime? identityDate, string identityPlace, DateTime? joinDate, int? martialStatus, int? educationalBackground,
-            Guid? qualificationId, Guid? departmentId, Guid? positionId, int? workStatus, string personalTaxCode, decimal? salary)
+            Guid? qualificationId, Guid? departmentId, Guid? positionId, int? workStatus, string personalTaxCode, double? salary)
             : base(firstName, lastName, fullName, gender, dateOfBirth, address, email, phoneNumber)
         {
             this.employeeId = new Guid();
@@ -201,12 +203,25 @@ namespace MISA.CukCuk.Core.Entities
         /// <summary>
         /// Lương cơ bản
         /// </summary>
-        public decimal? Salary
+        public double? Salary
         {
             get { return this.salary; }
             set { this.salary = value; }
         }
 
+        [NotMap]
+        public string PositionName
+        {
+            get { return this.positionName; }
+            set { this.positionName = value; }
+        }
+
+        [NotMap]
+        public string DepartmentName
+        {
+            get { return this.departmentName; }
+            set { this.departmentName = value; }
+        }
         #endregion
 
         #region Method

@@ -24,4 +24,10 @@ namespace MISA.CukCuk.Core.Entities
     {
 
     }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public class NotMap : Attribute
+    {
+
+    }
 }

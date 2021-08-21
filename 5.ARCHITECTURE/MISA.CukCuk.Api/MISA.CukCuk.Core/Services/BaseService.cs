@@ -12,7 +12,7 @@ namespace MISA.CukCuk.Core.Services
     public class BaseService<MISAEntity> : IBaseService<MISAEntity>
     {
 
-        IBaseRepository<MISAEntity> _baseRepository;
+        protected IBaseRepository<MISAEntity> _baseRepository;
         public ServiceResult _serviceResult;
 
         //Ctor

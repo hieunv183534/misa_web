@@ -12,15 +12,7 @@ namespace MISA.CukCuk.Infrastructure.Repositiory
 {
     public class CustomerRepository : BaseRepository<Customer> ,ICustomerRepository
     {
-
-        public Customer GetByCustomerCode(string customerCode)
-        {
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("@CustomerCode", customerCode);
-            var sql = $"select * from Customer where CustomerCode = @CustomerCode";
-            Customer customer = dbConnection.QueryFirstOrDefault(sql, param: parameters);
-            return customer;
-        }
+        #region GetFilter
 
         public PagingResult<Customer> GetFilter(int pageSize, int pageNumber, Guid? customerGroupId, string searchTerms)
         {
@@ -44,22 +36,27 @@ namespace MISA.CukCuk.Infrastructure.Repositiory
                 sqlCondition += $" and CustomerGroupId = @CustomerGroupId ";
             }
 
-            // lấy tổng số bản ghi 
-            var sqlCount = $"select count(CustomerId) as TotalRecord from Customer " + sqlCondition;
-            int TotalRecord = (int)dbConnection.QueryFirstOrDefault(sqlCount, param: parameters).TotalRecord;
+            using (var dbConnection = DatabaseConnection.DbConnection)
+            {
+                // lấy tổng số bản ghi 
+                var sqlCount = $"select count(CustomerId) as TotalRecord from Customer " + sqlCondition;
+                int TotalRecord = (int)dbConnection.QueryFirstOrDefault(sqlCount, param: parameters).TotalRecord;
 
-            // Xử lsi điều kiện limit, offset
-            var limit = pageSize;
-            var offset = (pageNumber - 1) * pageSize;
-            parameters.Add($"@limit", limit);
-            parameters.Add($"@offset", offset);
-            sql += sqlCondition;
-            sql += $" limit @offset, @limit ";
+                // Xử lsi điều kiện limit, offset
+                var limit = pageSize;
+                var offset = (pageNumber - 1) * pageSize;
+                parameters.Add($"@limit", limit);
+                parameters.Add($"@offset", offset);
+                sql += sqlCondition;
+                sql += $" limit @offset, @limit ";
 
-            // thực hiện truy vấn
-            var customers = dbConnection.Query<Customer>(sql, param: parameters);
+                // thực hiện truy vấn
+                var customers = dbConnection.Query<Customer>(sql, param: parameters);
 
-            return new PagingResult<Customer>(TotalRecord, (List<Customer>)customers);
+                return new PagingResult<Customer>(TotalRecord, (List<Customer>)customers);
+            }
         }
+
+        #endregion
     }
 }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace MISA.CukCuk.Core.Services
@@ -50,100 +51,50 @@ namespace MISA.CukCuk.Core.Services
             }
         }
 
-        //public override ServiceResult Add(Employee employee)
-        //{
-        //    // validate dữ liệu
+        public override ServiceResult Add(Employee entity)
+        {
+            // validate riêng cho employee
+            // validate mã nhân viên dạng NV1234
 
-        //    // kiểm tra email
-        //    if (!Common.IsValidEmail(employee.Email))
-        //    {
-        //        var errorObj = new
-        //        {
-        //            devMsg = Resources.ResourceVN.MISA_Error_Dev_InvalidField,
-        //            userMsg = Resources.ResourceVN.MISA_Error_User_InvalidField
-        //        };
+            var customerCode = entity.GetType().GetProperty("EmployeeCode").GetValue(entity);
+            if (customerCode != null && customerCode.ToString() != "")
+            {
+                if (!Regex.IsMatch((string)customerCode, @"^((NV)(\d+))$"))
+                {
+                    _serviceResult.Data = new
+                    {
+                        devMsg = Resources.ResourceVN.MISA_Error_Dev_InvalidField,
+                        userMsg = Resources.ResourceVN.MISA_Error_User_InvalidField,
+                    };
+                    _serviceResult.StatusCode = 400;
+                    return _serviceResult;
+                }
+            }
+            // sử dụng tiếp hàm của base
+            return base.Add(entity);
+        }
 
-        //        _serviceResult.Data = errorObj;
-        //        _serviceResult.StatusCode = 400;
-        //        return _serviceResult;
-        //    }
+        public override ServiceResult Update(Employee entity, Guid entityId)
+        {
+            // validate riêng cho employee
+            // validate mã nhân viên dạng NV1234
 
-        //    // kiểm tra mã nhân viên có null hoặc rỗng
-        //    if (employee.EmployeeCode == "" || employee.EmployeeCode == null)
-        //    {
-        //        var errorObj = new
-        //        {
-        //            devMsg = Resources.ResourceVN.MISA_Error_Dev_NullField,
-        //            userMsg = Resources.ResourceVN.MISA_Error_User_NullField
-        //        };
-        //        _serviceResult.Data = errorObj;
-        //        _serviceResult.StatusCode = 400;
-        //        return _serviceResult;
-        //    }
-
-        //    // kiểm tra mã nhân viên có bị trùng không
-        //    var employeeByCode = _employeeRepository.GetByEmployeeCode(employee.EmployeeCode);
-        //    if (employeeByCode != null)
-        //    {
-        //        var errorObj = new
-        //        {
-        //            devMsg = Resources.ResourceVN.MISA_Error_Dev_DuplicateFiled,
-        //            userMsg = Resources.ResourceVN.MISA_Error_User_DuplicateField
-        //        };
-        //        _serviceResult.Data = errorObj;
-        //        _serviceResult.StatusCode = 400;
-        //        return _serviceResult;
-        //    }
-
-        //    return base.Add(employee);
-        //}
-
-        //public override ServiceResult Update(Employee employee, Guid employeeId)
-        //{
-        //    // validate dữ liệu
-
-        //    // kiểm tra email
-        //    if (!Common.IsValidEmail(employee.Email))
-        //    {
-        //        var errorObj = new
-        //        {
-        //            devMsg = Resources.ResourceVN.MISA_Error_Dev_InvalidField,
-        //            userMsg = Resources.ResourceVN.MISA_Error_User_InvalidField
-        //        };
-
-        //        _serviceResult.Data = errorObj;
-        //        _serviceResult.StatusCode = 400;
-        //        return _serviceResult;
-        //    }
-
-        //    // kiểm tra mã nhân viên có null hoặc rỗng
-        //    if (employee.EmployeeCode == "" || employee.EmployeeCode == null)
-        //    {
-        //        var errorObj = new
-        //        {
-        //            devMsg = Resources.ResourceVN.MISA_Error_Dev_NullField,
-        //            userMsg = Resources.ResourceVN.MISA_Error_User_NullField
-        //        };
-        //        _serviceResult.Data = errorObj;
-        //        _serviceResult.StatusCode = 400;
-        //        return _serviceResult;
-        //    }
-
-        //    // kiểm tra mã nhân viên có bị trùng không
-        //    var employeeByCode = _employeeRepository.GetByEmployeeCode(employee.EmployeeCode);
-        //    if (employeeByCode != null)
-        //    {
-        //        var errorObj = new
-        //        {
-        //            devMsg = Resources.ResourceVN.MISA_Error_Dev_DuplicateFiled,
-        //            userMsg = Resources.ResourceVN.MISA_Error_User_DuplicateField
-        //        };
-        //        _serviceResult.Data = errorObj;
-        //        _serviceResult.StatusCode = 400;
-        //        return _serviceResult;
-        //    }
-
-        //    return base.Update(employee, employeeId);
-        //}
+            var customerCode = entity.GetType().GetProperty("EmployeeCode").GetValue(entity);
+            if (customerCode != null && customerCode.ToString() != "")
+            {
+                if (!Regex.IsMatch((string)customerCode, @"^((NV)(\d+))$"))
+                {
+                    _serviceResult.Data = new
+                    {
+                        devMsg = Resources.ResourceVN.MISA_Error_Dev_InvalidField,
+                        userMsg = Resources.ResourceVN.MISA_Error_User_InvalidField,
+                    };
+                    _serviceResult.StatusCode = 400;
+                    return _serviceResult;
+                }
+            }
+            // sử dụng tiếp hàm của base
+            return base.Update(entity, entityId);
+        }
     }
 }

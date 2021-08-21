@@ -19,12 +19,5 @@ namespace MISA.CukCuk.Core.Interfaces.IRepository
         /// <param name="searchTerms"></param>
         /// <returns></returns>
         PagingResult<Employee> GetFilter(int pageSize, int pageNumber, Guid? positionId, Guid? departmentId , string searchTerms);
-
-        /// <summary>
-        /// lấy dữ liệu theo mã nhân viên
-        /// </summary>
-        /// <param name="employeeCode"></param>
-        /// <returns></returns>
-        Employee GetByEmployeeCode(string employeeCode);
     }
 }

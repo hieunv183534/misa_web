@@ -95,6 +95,7 @@ namespace MISA.CukCuk.Core.Entities
         /// <summary>
         /// Họ và tên
         /// </summary>
+        [Requied]
         public string FullName
         {
             get { return this.fullName; }
@@ -131,6 +132,7 @@ namespace MISA.CukCuk.Core.Entities
         /// <summary>
         /// Email
         /// </summary>
+        [Requied]
         public string Email
         {
             get { return this.email; }
@@ -140,6 +142,7 @@ namespace MISA.CukCuk.Core.Entities
         /// <summary>
         /// Số điện thoại
         /// </summary>
+        [Requied]
         public string PhoneNumber
         {
             get { return this.phoneNumber; }

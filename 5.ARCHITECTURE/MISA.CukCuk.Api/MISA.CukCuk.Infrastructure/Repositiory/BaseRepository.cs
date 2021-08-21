@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using MISA.CukCuk.Core.Entities;
 using MISA.CukCuk.Core.Interfaces.IRepository;
 using System;
 using System.Collections.Generic;
@@ -11,15 +12,22 @@ namespace MISA.CukCuk.Infrastructure.Repositiory
 {
     public class BaseRepository<MISAEntity> : IBaseRepository<MISAEntity>
     {
+        #region Declare
 
-        public IDbConnection dbConnection;
         string _tableName;
+
+        #endregion
+
+        #region Consrtuctor
 
         public BaseRepository()
         {
-            dbConnection = DatabaseConnection.DbConnection;
             _tableName = typeof(MISAEntity).Name;
         }
+
+        #endregion
+
+        #region Add
 
         /// <summary>-------------------------------------------------------------------------------
         /// Thêm mới 1 bản ghi
@@ -28,9 +36,6 @@ namespace MISA.CukCuk.Infrastructure.Repositiory
         /// <returns></returns>
         public int Add(MISAEntity entity)
         {
-            //// thêm id của employee là new guid
-            //entity.CustomerId = Guid.NewGuid();
-
             /// complete sql String
             var colNames = string.Empty;
             var colParams = string.Empty;
@@ -42,31 +47,39 @@ namespace MISA.CukCuk.Infrastructure.Repositiory
 
             foreach (var prop in properties)
             {
-                // lấy tên prop
-                var propName = prop.Name;
-
-                // lấy value prop
-                var propValue = prop.GetValue(entity);
-                //// lấy kiểu prop
-                //var propType = prop.PropertyType;
-
-                // nếu là id entity thì new Guid
-                if(propName == $"{_tableName}Id")
+                if(!prop.IsDefined(typeof(NotMap), false))
                 {
-                    propValue = Guid.NewGuid().ToString();
+                    // lấy tên prop
+                    var propName = prop.Name;
+
+                    // lấy value prop
+                    var propValue = prop.GetValue(entity);
+                    //// lấy kiểu prop
+                    //var propType = prop.PropertyType;
+
+                    // nếu là id entity thì new Guid
+                    if (propName == $"{_tableName}Id")
+                    {
+                        propValue = Guid.NewGuid().ToString();
+                    }
+                    parameters.Add($"@{propName}", propValue);
+                    colNames += $"{propName},";
+                    colParams += $"@{propName},";
                 }
-
-
-                parameters.Add($"@{propName}", propValue);
-                colNames += $"{propName},";
-                colParams += $"@{propName},";
             }
             colNames = colNames.Remove(colNames.Length - 1, 1);
             colParams = colParams.Remove(colParams.Length - 1, 1);
             var sql = $"insert into {_tableName}({colNames}) values( {colParams} ) ";
-            var rowAffects = dbConnection.Execute(sql, param: parameters);
-            return rowAffects;
+            using (var dbConnection = DatabaseConnection.DbConnection)
+            {
+                var rowAffects = dbConnection.Execute(sql, param: parameters);
+                return rowAffects;
+            }
         }
+
+        #endregion
+
+        #region Delete
 
         /// <summary>-------------------------------------------------------------------------------
         /// Xóa 1 bản ghi theo id
@@ -76,9 +89,16 @@ namespace MISA.CukCuk.Infrastructure.Repositiory
         public int Delete(Guid entityId)
         {
             var sql = $"delete from {_tableName} where {_tableName}Id = '{entityId}'";
-            var rowAffects = dbConnection.Execute(sql);
-            return rowAffects;
+            using (var dbConnection = DatabaseConnection.DbConnection)
+            {
+                var rowAffects = dbConnection.Execute(sql);
+                return rowAffects;
+            }
         }
+
+        #endregion
+
+        #region GetAll
 
         /// <summary>------------------------------------------------------------------------------
         /// Lấy tất cả bản ghi hiện có
@@ -87,9 +107,16 @@ namespace MISA.CukCuk.Infrastructure.Repositiory
         public List<MISAEntity> GetAll()
         {
             var sql = $"select * from {_tableName}";
-            var entities = dbConnection.Query<MISAEntity>(sql);
-            return (List<MISAEntity>)entities;
+            using(var dbConnection = DatabaseConnection.DbConnection)
+            {
+                var entities = dbConnection.Query<MISAEntity>(sql);
+                return (List<MISAEntity>)entities;
+            } 
         }
+
+        #endregion
+
+        #region GetById
 
         /// <summary>---------------------------------------------------------------------------
         /// Lấy 1 bản ghi theo id
@@ -101,18 +128,38 @@ namespace MISA.CukCuk.Infrastructure.Repositiory
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add($"@{_tableName}Id", entityId);
             var sql = $"select * from {_tableName} where {_tableName}Id= @{_tableName}Id";
-            var entity = dbConnection.QueryFirstOrDefault<MISAEntity>(sql, param: parameters);
-            return entity;
+            using(var dbConnection = DatabaseConnection.DbConnection)
+            {
+                var entity = dbConnection.QueryFirstOrDefault<MISAEntity>(sql, param: parameters);
+                return entity;
+            }     
         }
 
+        #endregion
+
+        #region GetByProp
+
+        /// <summary>
+        /// Lấy 1 bản ghi theo 1 prop nào đó
+        /// </summary>
+        /// <param name="propName"></param>
+        /// <param name="propValue"></param>
+        /// <returns></returns>
         public MISAEntity GetByProp(string propName, object propValue)
         {
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add($"@{propName}", propValue.ToString());
             var sql = $"select * from {_tableName} where {propName}= @{propName} ";
-            var entity = dbConnection.QueryFirstOrDefault<MISAEntity>(sql, param: parameters);
-            return entity;
+            using(var dbConnection = DatabaseConnection.DbConnection)
+            {
+                var entity = dbConnection.QueryFirstOrDefault<MISAEntity>(sql, param: parameters);
+                return entity;
+            }        
         }
+
+        #endregion
+
+        #region Update
 
         /// <summary>----------------------------------------------------------------------------
         /// cập nhật một bản ghi với id
@@ -131,20 +178,29 @@ namespace MISA.CukCuk.Infrastructure.Repositiory
 
             foreach (var prop in properties)
             {
-                // lấy tên prop
-                var propName = prop.Name;
-                // lấy value prop
-                var propValue = prop.GetValue(entity);
-                // lấy kiểu prop
-                var propType = prop.PropertyType;
+                if(!prop.IsDefined(typeof(NotMap), false))
+                {
+                    // lấy tên prop
+                    var propName = prop.Name;
+                    // lấy value prop
+                    var propValue = prop.GetValue(entity);
+                    // lấy kiểu prop
+                    var propType = prop.PropertyType;
 
-                parameters.Add($"@{propName}", propValue);
-                cols += $" { propName } = @{propName},";
+                    parameters.Add($"@{propName}", propValue);
+                    cols += $" { propName } = @{propName},";
+                }
             }
             cols = cols.Remove(cols.Length - 1, 1);
             var sql = $"update {_tableName} set {cols} where {_tableName}Id = '{entityId}'";
-            var rowAffects = dbConnection.Execute(sql, param: parameters);
-            return rowAffects;
+            using(var dbConnection = DatabaseConnection.DbConnection)
+            {
+                var rowAffects = dbConnection.Execute(sql, param: parameters);
+                return rowAffects;
+            }        
         }
+
+        #endregion
+
     }
 }

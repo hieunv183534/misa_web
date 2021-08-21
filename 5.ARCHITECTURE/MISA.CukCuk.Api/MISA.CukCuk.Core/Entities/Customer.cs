@@ -13,11 +13,12 @@ namespace MISA.CukCuk.Core.Entities
         private Guid customerId;
         private string customerCode;
         private Guid? customerGroupId;
-        private decimal? debitAmount;
+        private double? debitAmount;
         private string memberCardCode;
         private string companyName;
         private string companyTaxCode;
         private int? isStopFollow;
+        private string customerGroupName;
 
         #endregion
 
@@ -38,7 +39,7 @@ namespace MISA.CukCuk.Core.Entities
 
         // tất cả các thuộc tính
         public Customer(string customerCode, string firstName, string lastName, string fullName, int? gender, string address,
-            DateTime? dateOfBirth, string email, string phoneNumber, Guid? customerGroupId, decimal? debitAmount,
+            DateTime? dateOfBirth, string email, string phoneNumber, Guid? customerGroupId, double? debitAmount,
             string memberCardCode, string companyName, string companyTaxCode, int? isStopFollow)
             : base(firstName, lastName, fullName, gender, dateOfBirth, address, email, phoneNumber)
         {
@@ -78,7 +79,7 @@ namespace MISA.CukCuk.Core.Entities
             set { this.customerGroupId = value; }
         }
 
-        public decimal? DebitAmount
+        public double? DebitAmount
         {
             get { return this.debitAmount; }
             set { this.debitAmount = value; }
@@ -108,6 +109,15 @@ namespace MISA.CukCuk.Core.Entities
             set { this.isStopFollow = value; }
         }
 
+        [NotMap]
+        public string CustomerGroupName
+        {
+            get { return this.customerGroupName; }
+            set { this.customerGroupName = value; }
+        }
+
+        [NotMap]
+        public List<string> ErrorList { get; set; }
         #endregion
 
         #region Method

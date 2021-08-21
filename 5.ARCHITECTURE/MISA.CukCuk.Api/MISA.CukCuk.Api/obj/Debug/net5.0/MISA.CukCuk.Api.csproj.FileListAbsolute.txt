@@ -33,3 +33,6 @@ C:\Users\Admin\Desktop\MISA\misa_web\5.ARCHITECTURE\MISA.CukCuk.Api\MISA.CukCuk.
 C:\Users\Admin\Desktop\MISA\misa_web\5.ARCHITECTURE\MISA.CukCuk.Api\MISA.CukCuk.Api\obj\Debug\net5.0\ref\MISA.CukCuk.Api.dll
 C:\Users\Admin\Desktop\MISA\misa_web\5.ARCHITECTURE\MISA.CukCuk.Api\MISA.CukCuk.Api\obj\Debug\net5.0\MISA.CukCuk.Api.pdb
 C:\Users\Admin\Desktop\MISA\misa_web\5.ARCHITECTURE\MISA.CukCuk.Api\MISA.CukCuk.Api\obj\Debug\net5.0\MISA.CukCuk.Api.genruntimeconfig.cache
+C:\Users\Admin\Desktop\MISA\misa_web\5.ARCHITECTURE\MISA.CukCuk.Api\MISA.CukCuk.Api\bin\Debug\net5.0\EPPlus.dll
+C:\Users\Admin\Desktop\MISA\misa_web\5.ARCHITECTURE\MISA.CukCuk.Api\MISA.CukCuk.Api\bin\Debug\net5.0\Microsoft.IO.RecyclableMemoryStream.dll
+C:\Users\Admin\Desktop\MISA\misa_web\5.ARCHITECTURE\MISA.CukCuk.Api\MISA.CukCuk.Api\bin\Debug\net5.0\System.Xml.XPath.XmlDocument.dll

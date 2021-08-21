@@ -11,15 +11,17 @@ namespace MISA.CukCuk.Infrastructure.Repositiory
 {
     public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
     {
-        public Employee GetByEmployeeCode(string employeeCode)
-        {
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("@EmployeeCode", employeeCode);
-            var sql = $"select * from Employee where EmployeeCode = @EmployeeCode";
-            Employee employee = dbConnection.QueryFirstOrDefault(sql, param: parameters);
-            return employee;
-        }
+        #region GetFilter
 
+        /// <summary>
+        /// Lọc nhâna viên phân trang theo các tiêu chí
+        /// </summary>
+        /// <param name="pageSize"></param>
+        /// <param name="pageNumber"></param>
+        /// <param name="positionId"></param>
+        /// <param name="departmentId"></param>
+        /// <param name="searchTerms"></param>
+        /// <returns></returns>
         public PagingResult<Employee> GetFilter(int pageSize, int pageNumber, Guid? positionId, Guid? departmentId, string searchTerms)
         {
             DynamicParameters parameters = new DynamicParameters();
@@ -48,23 +50,29 @@ namespace MISA.CukCuk.Infrastructure.Repositiory
                 parameters.Add($"@DepartmentId", departmentId);
                 sqlCondition += $" and DepartmentId = @DepartmentId ";
             }
+            
 
-            // lấy tổng số bản ghi 
-            var sqlCount = $"select count(EmployeeId) as TotalRecord from Employee " + sqlCondition;
-            int TotalRecord = (int)dbConnection.QueryFirstOrDefault(sqlCount, param: parameters).TotalRecord;
+            using (var dbConnection = DatabaseConnection.DbConnection)
+            {
+                // lấy tổng số bản ghi 
+                var sqlCount = $"select count(EmployeeId) as TotalRecord from Employee " + sqlCondition;
+                int TotalRecord = (int)dbConnection.QueryFirstOrDefault(sqlCount, param: parameters).TotalRecord;
 
-            // Xử lsi điều kiện limit, offset
-            var limit = pageSize;
-            var offset = (pageNumber - 1) * pageSize;
-            parameters.Add($"@limit", limit);
-            parameters.Add($"@offset", offset);
-            sql += sqlCondition;
-            sql += $" limit @offset, @limit ";
+                // Xử lsi điều kiện limit, offset
+                var limit = pageSize;
+                var offset = (pageNumber - 1) * pageSize;
+                parameters.Add($"@limit", limit);
+                parameters.Add($"@offset", offset);
+                sql += sqlCondition;
+                sql += $" limit @offset, @limit ";
 
-            // thực hiện truy vấn
-            var employees = dbConnection.Query<Employee>(sql, param: parameters);
+                // thực hiện truy vấn
+                var employees = dbConnection.Query<Employee>(sql, param: parameters);
 
-            return new PagingResult<Employee>(TotalRecord, (List<Employee>)employees);
+                return new PagingResult<Employee>(TotalRecord, (List<Employee>)employees);
+            }
         }
+
+        #endregion   
     }
 }

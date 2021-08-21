@@ -1,4 +1,5 @@
 ﻿using MISA.CukCuk.Core.Entities;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,5 +19,12 @@ namespace MISA.CukCuk.Core.Interfaces.IServices
         /// <param name="searchTerms"></param>
         /// <returns></returns>
         ServiceResult GetFilter(int pageSize, int pageNumber, Guid? customerGroupId, string searchTerms);
+
+        /// <summary>
+        /// Validate bước 1 import
+        /// </summary>
+        /// <param name="package"></param>
+        /// <returns></returns>
+        ServiceResult Import(ExcelPackage package);
     }
 }
