@@ -38,5 +38,11 @@ namespace MISA.CukCuk.Api.Controllers
             var serviceResult = _employeeService.Update(employee, employeeId);
             return StatusCode(serviceResult.StatusCode, serviceResult.Data);
         }
+
+        public override IActionResult GetAll()
+        {
+            var serviceResult = _employeeService.GetAll();
+            return StatusCode(serviceResult.StatusCode, serviceResult.Data);
+        }
     }
 }

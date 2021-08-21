@@ -43,5 +43,12 @@ namespace MISA.CukCuk.Core.Interfaces.IServices
         /// <param name="entityId"></param>
         /// <returns></returns>
         ServiceResult Delete(Guid entityId);
+
+        /// <summary>
+        /// Thêm nhiều bản ghi
+        /// </summary>
+        /// <param name="entities"></param>
+        /// <returns></returns>
+        ServiceResult AddMany(List<MISAEntity> entities);
     }
 }

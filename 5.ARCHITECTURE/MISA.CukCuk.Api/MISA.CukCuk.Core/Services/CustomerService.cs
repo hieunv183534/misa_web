@@ -16,7 +16,7 @@ namespace MISA.CukCuk.Core.Services
         #region Declare
 
         ICustomerRepository _customerRepository;
-        List<Customer> importAllowCustomers;
+        static List<Customer> importAllowCustomers;
         IBaseRepository<CustomerGroup> _customerGroupRepo;
 
         #endregion
@@ -30,8 +30,6 @@ namespace MISA.CukCuk.Core.Services
         }
 
         #endregion
-
-
 
         #region GetFilter
 
@@ -142,6 +140,41 @@ namespace MISA.CukCuk.Core.Services
         }
         #endregion
 
+        #region GetAll
+
+        public override ServiceResult GetAll()
+        {
+            try
+            {
+                // xử lí nghiệp vụ lấy dữ liệu
+                // lấy tất cả dữ liệu từ db
+                var entities = _customerRepository.GetAll();
+                if (entities.Count() > 0)
+                {
+                    _serviceResult.Data = entities;
+                    _serviceResult.StatusCode = 200;
+                    return _serviceResult;
+                }
+                else
+                {
+                    _serviceResult.StatusCode = 204;
+                    return _serviceResult;
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorObj = new
+                {
+                    devMsg = ex.Message,
+                    userMsg = Resources.ResourceVN.MISA_Error_User,
+                };
+                _serviceResult.Data = errorObj;
+                _serviceResult.StatusCode = 500;
+                return _serviceResult;
+            }
+        }
+
+        #endregion
 
         #region Import
 
@@ -164,7 +197,7 @@ namespace MISA.CukCuk.Core.Services
                 var customer = new Customer();
                 customer.ErrorList = new List<string>();
                 // validate CustomerGroup
-                customer.CustomerGroupName = worksheet.Cells[row, 1].Value == null ? null : worksheet.Cells[row, 1].Value.ToString().Trim();
+                customer.CustomerGroupName = worksheet.Cells[row, 4].Value == null ? null : worksheet.Cells[row, 4].Value.ToString().Trim();
                 if(customer.CustomerGroupName != null)
                 {
                     int flag = 0;
@@ -176,7 +209,7 @@ namespace MISA.CukCuk.Core.Services
                             break;
                         }
                     }
-                    if (flag == 1)
+                    if (flag == 0)
                         customer.ErrorList.Add("Nhóm khách hàng không có trong hệ thống.");
                 }
       

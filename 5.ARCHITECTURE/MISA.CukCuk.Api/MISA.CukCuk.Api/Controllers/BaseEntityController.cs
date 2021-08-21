@@ -29,7 +29,7 @@ namespace MISA.CukCuk.Api.Controllers
         /// <returns>Danh sách khách hàng</returns>
         /// Author hieunv 16/08/2021
         [HttpGet]
-        public IActionResult GetAll()
+        public virtual IActionResult GetAll()
         {
             var serviceResult = _baseService.GetAll();
             return StatusCode(serviceResult.StatusCode, serviceResult.Data);
@@ -101,6 +101,17 @@ namespace MISA.CukCuk.Api.Controllers
         public IActionResult Delete(Guid entityId)
         {
             var serviceResult = _baseService.Delete(entityId);
+            return StatusCode(serviceResult.StatusCode, serviceResult.Data);
+        }
+
+        #endregion
+
+        #region Thêm mới nhiều bản ghi
+
+        [HttpPost("many")]
+        public IActionResult PostMany([FromBody] List<MISAEntity> entities)
+        {
+            var serviceResult = _baseService.AddMany(entities);
             return StatusCode(serviceResult.StatusCode, serviceResult.Data);
         }
 

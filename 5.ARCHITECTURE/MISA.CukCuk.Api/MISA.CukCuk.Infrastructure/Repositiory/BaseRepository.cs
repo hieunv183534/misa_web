@@ -36,45 +36,33 @@ namespace MISA.CukCuk.Infrastructure.Repositiory
         /// <returns></returns>
         public int Add(MISAEntity entity)
         {
-            /// complete sql String
-            var colNames = string.Empty;
-            var colParams = string.Empty;
-            // đọc từng property
-            var properties = entity.GetType().GetProperties();
-
-            DynamicParameters parameters = new DynamicParameters();
-            // duyệt từng property
-
-            foreach (var prop in properties)
-            {
-                if(!prop.IsDefined(typeof(NotMap), false))
-                {
-                    // lấy tên prop
-                    var propName = prop.Name;
-
-                    // lấy value prop
-                    var propValue = prop.GetValue(entity);
-                    //// lấy kiểu prop
-                    //var propType = prop.PropertyType;
-
-                    // nếu là id entity thì new Guid
-                    if (propName == $"{_tableName}Id")
-                    {
-                        propValue = Guid.NewGuid().ToString();
-                    }
-                    parameters.Add($"@{propName}", propValue);
-                    colNames += $"{propName},";
-                    colParams += $"@{propName},";
-                }
-            }
-            colNames = colNames.Remove(colNames.Length - 1, 1);
-            colParams = colParams.Remove(colParams.Length - 1, 1);
-            var sql = $"insert into {_tableName}({colNames}) values( {colParams} ) ";
+            var sql = RenderSqlStrForAdd(entity).SqlString;
+            var parameters = RenderSqlStrForAdd(entity).Parameters;
             using (var dbConnection = DatabaseConnection.DbConnection)
             {
                 var rowAffects = dbConnection.Execute(sql, param: parameters);
                 return rowAffects;
             }
+        }
+        #endregion
+
+        #region AddMany
+
+        public int AddMany(List<MISAEntity> entities)
+        {
+            var dbConnection = DatabaseConnection.DbConnection;
+            var transction = dbConnection.BeginTransaction();
+            var rowAffects = 0;
+            foreach (var entity in entities)
+            {
+                var sql = RenderSqlStrForAdd(entity).SqlString;
+                var parameters = RenderSqlStrForAdd(entity).Parameters;
+                rowAffects += dbConnection.Execute(sql, param: parameters);
+            }
+            transction.Commit();
+            if (rowAffects < entities.Count())
+                rowAffects = 0;
+            return rowAffects;
         }
 
         #endregion
@@ -104,7 +92,7 @@ namespace MISA.CukCuk.Infrastructure.Repositiory
         /// Lấy tất cả bản ghi hiện có
         /// </summary>
         /// <returns></returns>
-        public List<MISAEntity> GetAll()
+        public virtual List<MISAEntity> GetAll()
         {
             var sql = $"select * from {_tableName}";
             using(var dbConnection = DatabaseConnection.DbConnection)
@@ -202,5 +190,62 @@ namespace MISA.CukCuk.Infrastructure.Repositiory
 
         #endregion
 
+        #region RenderSqlStrForAdd
+
+        /// <summary>
+        /// tạo sql và parameter cho insert
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        private SqlResult RenderSqlStrForAdd(MISAEntity entity)
+        {
+            var sqlResult = new SqlResult();
+            /// complete sql String
+            var colNames = string.Empty;
+            var colParams = string.Empty;
+            // đọc từng property
+            var properties = entity.GetType().GetProperties();
+
+            DynamicParameters parameters = new DynamicParameters();
+            // duyệt từng property
+
+            foreach (var prop in properties)
+            {
+                if (!prop.IsDefined(typeof(NotMap), false))
+                {
+                    // lấy tên prop
+                    var propName = prop.Name;
+
+                    // lấy value prop
+                    var propValue = prop.GetValue(entity);
+                    //// lấy kiểu prop
+                    //var propType = prop.PropertyType;
+
+                    // nếu là id entity thì new Guid
+                    if (propName == $"{_tableName}Id")
+                    {
+                        propValue = Guid.NewGuid().ToString();
+                    }
+                    parameters.Add($"@{propName}", propValue);
+                    colNames += $"{propName},";
+                    colParams += $"@{propName},";
+                }
+            }
+            colNames = colNames.Remove(colNames.Length - 1, 1);
+            colParams = colParams.Remove(colParams.Length - 1, 1);
+            var sql = $"insert into {_tableName}({colNames}) values( {colParams} ) ";
+            sqlResult.SqlString = sql;
+            sqlResult.Parameters = parameters;
+            return sqlResult;
+        }
+
+        #endregion
+
+    }
+
+    class SqlResult
+    {
+        public string SqlString { get; set; }
+        public DynamicParameters Parameters { get; set; }
     }
 }

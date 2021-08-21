@@ -29,6 +29,13 @@ namespace MISA.CukCuk.Core.Interfaces.IRepository
         int Add(MISAEntity entity);
 
         /// <summary>
+        /// Thêm nhiều bản ghi
+        /// </summary>
+        /// <param name="entities"></param>
+        /// <returns></returns>
+        int AddMany(List<MISAEntity> entities);
+
+        /// <summary>
         /// Sửa 
         /// </summary>
         /// <param name="entity"></param>

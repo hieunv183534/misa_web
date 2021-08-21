@@ -17,7 +17,7 @@ namespace MISA.CukCuk.Infrastructure.Repositiory
         public PagingResult<Customer> GetFilter(int pageSize, int pageNumber, Guid? customerGroupId, string searchTerms)
         {
             DynamicParameters parameters = new DynamicParameters();
-            var sql = $"select * from Customer ";
+            var sql = $"select * from Customer c left join CustomerGroup cg on c.CustomerGroupId = cg.CustomerGroupId ";
             var sqlCondition = $"where 1=1 ";
 
             // nếu có search thì thêm điều kiệu sql là hoặc fullname, hoặc mã khách hàng, hoặc số điện thoại
@@ -26,7 +26,7 @@ namespace MISA.CukCuk.Infrastructure.Repositiory
                 parameters.Add($"@FullName", searchTerms);
                 parameters.Add($"@CustomerCode", searchTerms);
                 parameters.Add($"@PhoneNumber", searchTerms);
-                sqlCondition += $" and ( FullName = @FullName or CustomerCode=@CustomerCode or PhoneNumber=@PhoneNumber ) ";
+                sqlCondition += $" and ( FullName like '%{searchTerms}%' or CustomerCode=@CustomerCode or PhoneNumber=@PhoneNumber ) ";
             }
 
             // nếu CustomerGroupId được nhận và là 1 guid thì thêm điều kiện and CustomerGroupId = @CustomerGroupId
@@ -54,6 +54,20 @@ namespace MISA.CukCuk.Infrastructure.Repositiory
                 var customers = dbConnection.Query<Customer>(sql, param: parameters);
 
                 return new PagingResult<Customer>(TotalRecord, (List<Customer>)customers);
+            }
+        }
+
+        #endregion
+
+        #region GetAllCustomer
+
+        public override List<Customer> GetAll()
+        {
+            var sql = $"select * from Customer c left join CustomerGroup cg on c.CustomerGroupId = cg.CustomerGroupId";
+            using (var dbConnection = DatabaseConnection.DbConnection)
+            {
+                var customers = dbConnection.Query<Customer>(sql);
+                return (List<Customer>)customers;
             }
         }
 

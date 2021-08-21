@@ -142,7 +142,7 @@ namespace MISA.CukCuk.Core.Services
         /// Xử lí nghiệp vụ lấy tất cả
         /// </summary>
         /// <returns></returns>
-        public ServiceResult GetAll()
+        public virtual ServiceResult GetAll()
         {
             try
             {
@@ -343,6 +343,66 @@ namespace MISA.CukCuk.Core.Services
             }
             return 0;
         }
+
+        #region AddMany
+
+        /// <summary>
+        /// Xử lí nghiệp vụ thêm nhiều
+        /// </summary>
+        /// <param name="entities"></param>
+        /// <returns></returns>
+        public ServiceResult AddMany(List<MISAEntity> entities)
+        {
+            foreach (var entity in entities)
+            {
+                var isValidMode = Validate(entity, "add");
+                switch (isValidMode)
+                {
+                    case 1:
+                        _serviceResult.Data = new
+                        {
+                            devMsg = Resources.ResourceVN.MISA_Error_Dev_NullField,
+                            userMsg = Resources.ResourceVN.MISA_Error_User_NullField,
+                        };
+                        _serviceResult.StatusCode = 400;
+                        return _serviceResult;
+                    case 2:
+                        _serviceResult.Data = new
+                        {
+                            devMsg = Resources.ResourceVN.MISA_Error_Dev_DuplicateFiled,
+                            userMsg = Resources.ResourceVN.MISA_Error_User_DuplicateField,
+                        };
+                        _serviceResult.StatusCode = 400;
+                        return _serviceResult;
+                    case 3:
+                        _serviceResult.Data = new
+                        {
+                            devMsg = Resources.ResourceVN.MISA_Error_Dev_InvalidField,
+                            userMsg = Resources.ResourceVN.MISA_Error_User_InvalidField,
+                        };
+                        _serviceResult.StatusCode = 400;
+                        return _serviceResult;
+                    default:
+                        break;
+                }
+            }
+
+            // lưu tất cả cac bản ghi vào db
+            var rowAffect = _baseRepository.AddMany(entities);
+            if (rowAffect > 0)
+            {
+                _serviceResult.Data = rowAffect;
+                _serviceResult.StatusCode = 201;
+                return _serviceResult;
+            }
+            else
+            {
+                _serviceResult.StatusCode = 204;
+                return _serviceResult;
+            }
+        }
+
+        #endregion
 
     }
 }

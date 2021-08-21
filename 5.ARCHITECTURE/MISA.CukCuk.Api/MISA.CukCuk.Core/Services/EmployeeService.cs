@@ -96,5 +96,37 @@ namespace MISA.CukCuk.Core.Services
             // sử dụng tiếp hàm của base
             return base.Update(entity, entityId);
         }
+
+        public override ServiceResult GetAll()
+        {
+            try
+            {
+                // xử lí nghiệp vụ lấy dữ liệu
+                // lấy tất cả dữ liệu từ db
+                var entities = _employeeRepository.GetAll();
+                if (entities.Count() > 0)
+                {
+                    _serviceResult.Data = entities;
+                    _serviceResult.StatusCode = 200;
+                    return _serviceResult;
+                }
+                else
+                {
+                    _serviceResult.StatusCode = 204;
+                    return _serviceResult;
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorObj = new
+                {
+                    devMsg = ex.Message,
+                    userMsg = Resources.ResourceVN.MISA_Error_User,
+                };
+                _serviceResult.Data = errorObj;
+                _serviceResult.StatusCode = 500;
+                return _serviceResult;
+            }
+        }
     }
 }

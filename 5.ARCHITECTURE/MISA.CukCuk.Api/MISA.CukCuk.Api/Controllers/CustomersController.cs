@@ -78,14 +78,30 @@ namespace MISA.CukCuk.Api.Controllers
 
         #endregion
 
+        #region GetAllCustomer
 
+        public override IActionResult GetAll()
+        {
+            var serviceResult = _customerService.GetAll();
+            return StatusCode(serviceResult.StatusCode, serviceResult.Data);
+        }
+
+        #endregion
+
+        #region Import
+
+        /// <summary>
+        /// import đọc file
+        /// </summary>
+        /// <param name="formFile"></param>
+        /// <returns></returns>
         [HttpPost("import")]
         public IActionResult Import(IFormFile formFile)
         {
             try
             {
                 // check file có hợp lệ hay không?
-                if(formFile == null)
+                if (formFile == null)
                 {
                     return StatusCode(400, Core.Resources.ResourceVN.MISA_Error_Dev_NullField);
                 }
@@ -107,6 +123,8 @@ namespace MISA.CukCuk.Api.Controllers
                 return StatusCode(500, ex);
             }
         }
+
+        #endregion
 
     }
 }
